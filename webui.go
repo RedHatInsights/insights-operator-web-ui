@@ -298,8 +298,8 @@ func startHttpServer(address string) {
 	http.HandleFunc("/list-profiles", listProfiles)
 	http.HandleFunc("/list-configurations", listConfigurations)
 	http.HandleFunc("/describe-configuration", describeConfiguration)
-	http.HandleFunc("/new-profile", newProfile)
-	http.HandleFunc("/new-configuration", newConfiguration)
+	http.HandleFunc("/new-profile", staticPage("html/new_profile.html"))
+	http.HandleFunc("/new-configuration", staticPage("html/new_configuration.html"))
 	http.ListenAndServe(address, nil)
 }
 
