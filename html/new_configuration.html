@@ -1,0 +1,43 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>New cluster configuration</title>
+        <meta name="Author" content="Pavel Tisnovsky" />
+        <meta name="Generator" content="Golang" />
+        <meta http-equiv="Content-type"  content="text/html; charset=utf-8"/>
+        <link href="bootstrap.min.css" rel="stylesheet" type="text/css" />
+        <link href="ccx.css" rel="stylesheet" type="text/css" />
+        <script src="bootstrap.min.js" type="text/javascript"></script>
+    </head>
+    <body style="padding-top:70px">
+        <div class="container" style="width:97%">
+            <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+                <div class="container-fluid"><div class="row">
+                    <div class="col-md-4">
+                        <div class="navbar-header">
+                            <a class="navbar-brand" href="/">Insights operator web console</a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+                <div class="panel panel-primary">
+                    <div class="panel-heading">New cluster configuration</div>
+                        <form action='store-configuration' method='post'>
+                            <table class="table table-condensed table-hover table-bordered" rules="all">
+                                <tr><td>User name</td><td><input type='text' size='15' id='username' name='username' /></td></tr>
+                                <tr><td>Cluster</td><td><input type='text' size='15' id='cluster' name='cluster' /></td></tr>
+                                <tr><td>Reason</td><td><input id='reason' size='15' name='reason' /></td></tr>
+                                <tr><td>Description</td><td><input id='description' size='15' name='description' /></td></tr>
+                                <tr><td>Configuration</td><td>&nbsp;</td><tr>
+                                <tr><td>&nbsp;</td><td><textarea id='configuration' name='configuration' rows='10' cols='40'></textarea></td></tr>
+                                <tr><td>&nbsp;</td><td><input type='submit' value='Store profile'></td></tr>
+                            </table>
+                        </form>
+                    </div>
+                </div>
+            <br/>
+            <br/>
+            <br/>
+            <div>Author: Pavel Tisnovsky &lt;<a href="mailto:ptisnovs@redhat.com">ptisnovs@redhat.com</a>&gt; from the great CCX team</div>
+        </div>
+    </body>
+</html>
