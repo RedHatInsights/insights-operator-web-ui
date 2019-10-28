@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/spf13/viper"
 	"html/template"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -282,7 +283,13 @@ func describeConfiguration(writer http.ResponseWriter, request *http.Request) {
 	}
 }
 
-func startHttpServer() {
+func newProfile(writer http.ResponseWriter, request *http.Request) {
+}
+
+func newConfiguration(writer http.ResponseWriter, request *http.Request) {
+}
+
+func startHttpServer(address string) {
 	http.HandleFunc("/", staticPage("html/index.html"))
 	http.HandleFunc("/bootstrap.min.css", staticPage("html/bootstrap.min.css"))
 	http.HandleFunc("/bootstrap.min.js", staticPage("html/bootstrap.min.js"))
@@ -291,7 +298,9 @@ func startHttpServer() {
 	http.HandleFunc("/list-profiles", listProfiles)
 	http.HandleFunc("/list-configurations", listConfigurations)
 	http.HandleFunc("/describe-configuration", describeConfiguration)
-	http.ListenAndServe(":8888", nil)
+	http.HandleFunc("/new-profile", newProfile)
+	http.HandleFunc("/new-configuration", newConfiguration)
+	http.ListenAndServe(address, nil)
 }
 
 func main() {
@@ -304,8 +313,9 @@ func main() {
 		panic(fmt.Errorf("Fatal error config file: %s \n", err))
 	}
 
-	controllerURL = viper.GetString("URL")
+	controllerURL = viper.GetString("controller_url")
+	address := viper.GetString("address")
 
 	log.Println("Starting the service")
-	startHttpServer()
+	startHttpServer(address)
 }
