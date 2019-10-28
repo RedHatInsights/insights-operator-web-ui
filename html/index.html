@@ -1,10 +1,42 @@
-<html>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
     <head>
-        <title>Test</title>
-        <meta name="Generator" content="Go">
-        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+        <title>Insights operator web console</title>
+        <meta name="Author" content="Pavel Tisnovsky" />
+        <meta name="Generator" content="Golang" />
+        <meta http-equiv="Content-type"  content="text/html; charset=utf-8"/>
+        <link href="bootstrap.min.css" rel="stylesheet" type="text/css" />
+        <link href="ccx.css" rel="stylesheet" type="text/css" />
+        <script src="bootstrap.min.js" type="text/javascript"></script>
     </head>
-    <body>
-	<h1>Test</h1>
+    <body style="padding-top:70px">
+        <div class="container" style="width:97%">
+            <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+                <div class="container-fluid"><div class="row">
+                    <div class="col-md-4">
+                        <div class="navbar-header">
+                            <a class="navbar-brand" href="/">Insights operator web console</a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+                <div class="panel panel-primary">
+                    <div class="panel-heading">Available commands</div>
+                        <table class="table table-condensed table-hover table-bordered" rules="all">
+                            <tr><td><a href="/list-operators">List operators</a></td></tr>
+                            <tr><td><a href="/list-profiles">List configuration profiles</a></td></tr>
+                            <tr><td><a href="/list-configurations">List operator configurations</a></td></tr>
+                            <tr><td>&nbsp;</td></tr>
+                            <tr><td><a href="/new-profile">New configuration profile</a></td></tr>
+                            <tr><td><a href="/new-configuration">New operator configuration</a></td></tr>
+                        </table>
+                    </div>
+                </div>
+            <br/>
+            <br/>
+            <br/>
+            <div>Author: Pavel Tisnovsky &lt;<a href="mailto:ptisnovs@redhat.com">ptisnovs@redhat.com</a>&gt; from the great CCX team</div>
+        </div>
     </body>
 </html>
