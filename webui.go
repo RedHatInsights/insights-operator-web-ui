@@ -69,6 +69,19 @@ func readListOfClusters(controllerUrl string, apiPrefix string) ([]Cluster, erro
 	return clusters, nil
 }
 
+func readListOfConfigurationProfiles(controllerUrl string, apiPrefix string) ([]ConfigurationProfile, error) {
+	profiles := []ConfigurationProfile{}
+
+	url := controllerUrl + apiPrefix + "client/profile"
+	body, err := performReadRequest(url)
+
+	err = json.Unmarshal(body, &profiles)
+	if err != nil {
+		return nil, err
+	}
+	return profiles, nil
+}
+
 func getContentType(filename string) string {
 	// TODO: to map
 	if strings.HasSuffix(filename, ".html") {
@@ -125,12 +138,38 @@ func listClusters(writer http.ResponseWriter, request *http.Request) {
 	}
 }
 
+type ListProfilesDynContent struct {
+	Items []ConfigurationProfile
+}
+
+func listProfiles(writer http.ResponseWriter, request *http.Request) {
+	profiles, err := readListOfConfigurationProfiles(controllerURL, API_PREFIX)
+	if err != nil {
+		log.Println("Error reading list of configuration profiles", err)
+		return
+	}
+
+	t, err := template.ParseFiles("html/list_profiles.html")
+	if err != nil {
+		writer.WriteHeader(http.StatusNotFound)
+		fmt.Fprint(writer, "Not found!")
+		return
+	}
+
+	dynData := ListProfilesDynContent{Items: profiles}
+	err = t.Execute(writer, dynData)
+	if err != nil {
+		println("Error executing template")
+	}
+}
+
 func startHttpServer() {
 	http.HandleFunc("/", staticPage("html/index.html"))
 	http.HandleFunc("/bootstrap.min.css", staticPage("html/bootstrap.min.css"))
 	http.HandleFunc("/bootstrap.min.js", staticPage("html/bootstrap.min.js"))
 	http.HandleFunc("/ccx.ccs", staticPage("html/ccs.ccs"))
 	http.HandleFunc("/list-clusters", listClusters)
+	http.HandleFunc("/list-profiles", listProfiles)
 	http.ListenAndServe(":8888", nil)
 }
 
