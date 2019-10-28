@@ -1,8 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
-        <title>Insights operator web console</title>
+        <title>Cluster list</title>
         <meta name="Author" content="Pavel Tisnovsky" />
         <meta name="Generator" content="Golang" />
         <meta http-equiv="Content-type"  content="text/html; charset=utf-8"/>
@@ -22,14 +20,12 @@
                 </div>
             </nav>
                 <div class="panel panel-primary">
-                    <div class="panel-heading">Available commands</div>
+                    <div class="panel-heading">Cluster list</div>
                         <table class="table table-condensed table-hover table-bordered" rules="all">
-                            <tr><td><a href="/list-clusters">List clusters</a></td></tr>
-                            <tr><td><a href="/list-profiles">List configuration profiles</a></td></tr>
-                            <tr><td><a href="/list-configurations">List operator configurations</a></td></tr>
-                            <tr><td>&nbsp;</td></tr>
-                            <tr><td><a href="/new-profile">New configuration profile</a></td></tr>
-                            <tr><td><a href="/new-configuration">New operator configuration</a></td></tr>
+                            <tr><th>ID</th><th>Name</th></tr>
+			    {{range .Items}}
+			    <tr><td>{{.Id}}</td><td>{{.Name}}</td></tr>
+			    {{end}}
                         </table>
                     </div>
                 </div>
