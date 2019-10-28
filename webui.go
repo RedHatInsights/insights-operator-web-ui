@@ -98,6 +98,32 @@ func readListOfConfigurations(controllerUrl string, apiPrefix string) ([]Cluster
 	return configurations, nil
 }
 
+func readConfigurationProfile(controllerUrl string, apiPrefix string, profileId string) (*ConfigurationProfile, error) {
+	var profile ConfigurationProfile
+	url := controllerUrl + apiPrefix + "client/profile/" + profileId
+	body, err := performReadRequest(url)
+	if err != nil {
+		return nil, err
+	}
+
+	err = json.Unmarshal(body, &profile)
+	if err != nil {
+		return nil, err
+	}
+	return &profile, nil
+}
+
+func readClusterConfigurationById(controllerUrl string, apiPrefix string, configurationId string) (*string, error) {
+	url := controllerUrl + apiPrefix + "client/configuration/" + configurationId
+	body, err := performReadRequest(url)
+	if err != nil {
+		return nil, err
+	}
+
+	str := string(body)
+	return &str, nil
+}
+
 func getContentType(filename string) string {
 	// TODO: to map
 	if strings.HasSuffix(filename, ".html") {
@@ -204,6 +230,40 @@ func listConfigurations(writer http.ResponseWriter, request *http.Request) {
 	}
 }
 
+type DescribeConfigurationDynContent struct {
+	Configuration ConfigurationProfile
+}
+
+func describeConfiguration(writer http.ResponseWriter, request *http.Request) {
+	configId, ok := request.URL.Query()["configuration"]
+	if !ok {
+		writer.WriteHeader(http.StatusNotFound)
+		fmt.Fprint(writer, "Not found!")
+		return
+	}
+
+	configuration, err := readConfigurationProfile(controllerURL, API_PREFIX, configId[0])
+	fmt.Println(configuration)
+	if err != nil {
+		writer.WriteHeader(http.StatusNotFound)
+		fmt.Fprint(writer, "Not found!")
+		return
+	}
+
+	t, err := template.ParseFiles("html/describe_configuration.html")
+	if err != nil {
+		writer.WriteHeader(http.StatusNotFound)
+		fmt.Fprint(writer, "Error parsing template")
+		return
+	}
+
+	dynData := DescribeConfigurationDynContent{Configuration: *configuration}
+	err = t.Execute(writer, dynData)
+	if err != nil {
+		println("Error executing template")
+	}
+}
+
 func startHttpServer() {
 	http.HandleFunc("/", staticPage("html/index.html"))
 	http.HandleFunc("/bootstrap.min.css", staticPage("html/bootstrap.min.css"))
@@ -212,6 +272,7 @@ func startHttpServer() {
 	http.HandleFunc("/list-clusters", listClusters)
 	http.HandleFunc("/list-profiles", listProfiles)
 	http.HandleFunc("/list-configurations", listConfigurations)
+	http.HandleFunc("/describe-configuration", describeConfiguration)
 	http.ListenAndServe(":8888", nil)
 }
 
