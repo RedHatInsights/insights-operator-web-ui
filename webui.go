@@ -1,13 +1,40 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/spf13/viper"
+	"html/template"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"strings"
 )
+
+const API_PREFIX = "/api/v1/"
+
+type Cluster struct {
+	Id   int    `json:"id"`
+	Name string `json:"name"`
+}
+
+type ConfigurationProfile struct {
+	Id            int    `json:"id"`
+	Configuration string `json:"configuration"`
+	ChangedAt     string `json:"changed_at"`
+	ChangedBy     string `json:"changed_by"`
+	Description   string `json:"description"`
+}
+
+type ClusterConfiguration struct {
+	Id            int    `json:"id"`
+	Cluster       string `json:"cluster"`
+	Configuration string `json:"configuration"`
+	ChangedAt     string `json:"changed_at"`
+	ChangedBy     string `json:"changed_by"`
+	Active        string `json:"active"`
+	Reason        string `json:"reason"`
+}
 
 func getContentType(filename string) string {
 	// TODO: to map
