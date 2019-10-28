@@ -56,6 +56,24 @@ func performReadRequest(url string) ([]byte, error) {
 	return body, nil
 }
 
+func performWriteRequest(url string, method string, payload io.Reader) error {
+	var client http.Client
+
+	request, err := http.NewRequest(method, url, payload)
+	if err != nil {
+		return fmt.Errorf("Error creating request %v", err)
+	}
+
+	response, err := client.Do(request)
+	if err != nil {
+		return fmt.Errorf("Communication error with the server %v", err)
+	}
+	if response.StatusCode != http.StatusOK && response.StatusCode != http.StatusCreated && response.StatusCode != http.StatusAccepted {
+		return fmt.Errorf("Expected HTTP status 200 OK, 201 Created or 202 Accepted, got %d", response.StatusCode)
+	}
+	return nil
+}
+
 func readListOfClusters(controllerUrl string, apiPrefix string) ([]Cluster, error) {
 	clusters := []Cluster{}
 
