@@ -284,7 +284,29 @@ func describeConfiguration(writer http.ResponseWriter, request *http.Request) {
 	}
 }
 
-func newProfile(writer http.ResponseWriter, request *http.Request) {
+func storeProfile(writer http.ResponseWriter, request *http.Request) {
+	request.ParseForm()
+	form := request.Form
+
+	username := form.Get("username")
+	description := form.Get("description")
+	configuration := form.Get("configuration")
+
+	log.Println("username", username)
+	log.Println("description", description)
+	log.Println("configuration", configuration)
+
+	query := "username=" + url.QueryEscape(username) + "&description=" + url.QueryEscape(description)
+	url := controllerURL + API_PREFIX + "client/profile?" + query
+
+	err := performWriteRequest(url, "POST", strings.NewReader(configuration))
+	if err != nil {
+		log.Println("Error communicating with the service", err)
+		http.Redirect(writer, request, "/profile-not-created", 301)
+	} else {
+		log.Println("Configuration profile has been created")
+		http.Redirect(writer, request, "/profile-created", 301)
+	}
 }
 
 func storeConfiguration(writer http.ResponseWriter, request *http.Request) {
@@ -323,12 +345,15 @@ func startHttpServer(address string) {
 	http.HandleFunc("/ccx.ccs", staticPage("html/ccs.ccs"))
 	http.HandleFunc("/configuration-created", staticPage("html/configuration_created.html"))
 	http.HandleFunc("/configuration-not-created", staticPage("html/configuration_not_created.html"))
+	http.HandleFunc("/profile-created", staticPage("html/profile_created.html"))
+	http.HandleFunc("/profile-not-created", staticPage("html/profile_not_created.html"))
 	http.HandleFunc("/list-clusters", listClusters)
 	http.HandleFunc("/list-profiles", listProfiles)
 	http.HandleFunc("/list-configurations", listConfigurations)
 	http.HandleFunc("/describe-configuration", describeConfiguration)
 	http.HandleFunc("/new-profile", staticPage("html/new_profile.html"))
 	http.HandleFunc("/new-configuration", staticPage("html/new_configuration.html"))
+	http.HandleFunc("/store-profile", storeProfile)
 	http.HandleFunc("/store-configuration", storeConfiguration)
 	http.ListenAndServe(address, nil)
 }
