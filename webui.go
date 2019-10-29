@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/url"
 	"strings"
 )
 
@@ -286,7 +287,33 @@ func describeConfiguration(writer http.ResponseWriter, request *http.Request) {
 func newProfile(writer http.ResponseWriter, request *http.Request) {
 }
 
-func newConfiguration(writer http.ResponseWriter, request *http.Request) {
+func storeConfiguration(writer http.ResponseWriter, request *http.Request) {
+	request.ParseForm()
+	form := request.Form
+
+	username := form.Get("username")
+	cluster := form.Get("cluster")
+	reason := form.Get("reason")
+	description := form.Get("description")
+	configuration := form.Get("configuration")
+
+	log.Println("username", username)
+	log.Println("cluster", cluster)
+	log.Println("reason", reason)
+	log.Println("description", description)
+	log.Println("configuration", configuration)
+
+	query := "username=" + url.QueryEscape(username) + "&reason=" + url.QueryEscape(reason) + "&description=" + url.QueryEscape(description)
+	url := controllerURL + API_PREFIX + "client/cluster/" + url.PathEscape(cluster) + "/configuration?" + query
+
+	err := performWriteRequest(url, "POST", strings.NewReader(configuration))
+	if err != nil {
+		log.Println("Error communicating with the service", err)
+		http.Redirect(writer, request, "/configuration-not-created", 301)
+	} else {
+		log.Println("Configuration has been created")
+		http.Redirect(writer, request, "/configuration-created", 301)
+	}
 }
 
 func startHttpServer(address string) {
@@ -294,12 +321,15 @@ func startHttpServer(address string) {
 	http.HandleFunc("/bootstrap.min.css", staticPage("html/bootstrap.min.css"))
 	http.HandleFunc("/bootstrap.min.js", staticPage("html/bootstrap.min.js"))
 	http.HandleFunc("/ccx.ccs", staticPage("html/ccs.ccs"))
+	http.HandleFunc("/configuration-created", staticPage("html/configuration_created.html"))
+	http.HandleFunc("/configuration-not-created", staticPage("html/configuration_not_created.html"))
 	http.HandleFunc("/list-clusters", listClusters)
 	http.HandleFunc("/list-profiles", listProfiles)
 	http.HandleFunc("/list-configurations", listConfigurations)
 	http.HandleFunc("/describe-configuration", describeConfiguration)
 	http.HandleFunc("/new-profile", staticPage("html/new_profile.html"))
 	http.HandleFunc("/new-configuration", staticPage("html/new_configuration.html"))
+	http.HandleFunc("/store-configuration", storeConfiguration)
 	http.ListenAndServe(address, nil)
 }
 
@@ -316,6 +346,6 @@ func main() {
 	controllerURL = viper.GetString("controller_url")
 	address := viper.GetString("address")
 
-	log.Println("Starting the service")
+	log.Println("Starting the service at address: " + address)
 	startHttpServer(address)
 }
