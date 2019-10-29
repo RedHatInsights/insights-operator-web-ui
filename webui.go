@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 )
 
 const API_PREFIX = "/api/v1/"
@@ -229,8 +230,22 @@ type ListConfigurationsDynContent struct {
 	Items []ClusterConfiguration
 }
 
+var epoch = time.Unix(0, 0).Format(time.RFC1123)
+
+var noCacheHeaders = map[string]string{
+	"Expires":         epoch,
+	"Cache-Control":   "no-cache, private, max-age=0",
+	"Pragma":          "no-cache",
+	"X-Accel-Expires": "0",
+}
+
 func listConfigurations(writer http.ResponseWriter, request *http.Request) {
 	configurations, err := readListOfConfigurations(controllerURL, API_PREFIX)
+	// NoCache headers
+	for k, v := range noCacheHeaders {
+		writer.Header().Set(k, v)
+	}
+
 	if err != nil {
 		log.Println("Error reading list of cluster configurations", err)
 		return
@@ -338,11 +353,49 @@ func storeConfiguration(writer http.ResponseWriter, request *http.Request) {
 	}
 }
 
+func enableConfiguration(writer http.ResponseWriter, request *http.Request) {
+	configurationId, ok := request.URL.Query()["id"]
+	if !ok {
+		writer.WriteHeader(http.StatusNotFound)
+		fmt.Fprint(writer, "Not found!")
+		return
+	}
+	url := controllerURL + API_PREFIX + "client/configuration/" + configurationId[0] + "/enable"
+	err := performWriteRequest(url, "PUT", nil)
+	if err != nil {
+		fmt.Println("Error communicating with the service", err)
+		return
+	} else {
+		fmt.Println("Configuration " + configurationId[0] + " has been enabled")
+	}
+
+	http.Redirect(writer, request, "/list-configurations", 307)
+}
+
+func disableConfiguration(writer http.ResponseWriter, request *http.Request) {
+	configurationId, ok := request.URL.Query()["id"]
+	if !ok {
+		writer.WriteHeader(http.StatusNotFound)
+		fmt.Fprint(writer, "Not found!")
+		return
+	}
+	url := controllerURL + API_PREFIX + "client/configuration/" + configurationId[0] + "/disable"
+	err := performWriteRequest(url, "PUT", nil)
+	if err != nil {
+		fmt.Println("Error communicating with the service", err)
+		return
+	} else {
+		fmt.Println("Configuration " + configurationId[0] + " has been disabled")
+	}
+
+	http.Redirect(writer, request, "/list-configurations", 307)
+}
+
 func startHttpServer(address string) {
 	http.HandleFunc("/", staticPage("html/index.html"))
 	http.HandleFunc("/bootstrap.min.css", staticPage("html/bootstrap.min.css"))
 	http.HandleFunc("/bootstrap.min.js", staticPage("html/bootstrap.min.js"))
-	http.HandleFunc("/ccx.ccs", staticPage("html/ccs.ccs"))
+	http.HandleFunc("/ccx.css", staticPage("html/ccx.css"))
 	http.HandleFunc("/configuration-created", staticPage("html/configuration_created.html"))
 	http.HandleFunc("/configuration-not-created", staticPage("html/configuration_not_created.html"))
 	http.HandleFunc("/profile-created", staticPage("html/profile_created.html"))
@@ -355,6 +408,8 @@ func startHttpServer(address string) {
 	http.HandleFunc("/new-configuration", staticPage("html/new_configuration.html"))
 	http.HandleFunc("/store-profile", storeProfile)
 	http.HandleFunc("/store-configuration", storeConfiguration)
+	http.HandleFunc("/enable-configuration", enableConfiguration)
+	http.HandleFunc("/disable-configuration", disableConfiguration)
 	http.ListenAndServe(address, nil)
 }
 
