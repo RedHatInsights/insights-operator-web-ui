@@ -1,5 +1,5 @@
 /*
-Copyright © 2019 Red Hat, Inc.
+Copyright ĂĹ  2019 Red Hat, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -406,6 +407,40 @@ func disableConfiguration(writer http.ResponseWriter, request *http.Request) {
 	http.Redirect(writer, request, "/list-configurations", 307)
 }
 
+func triggerMustGatherConfiguration(writer http.ResponseWriter, request *http.Request) {
+	clusterId, ok := request.URL.Query()["clusterId"]
+	if !ok {
+		writer.WriteHeader(http.StatusNotFound)
+		fmt.Fprint(writer, "Not found!")
+		return
+	}
+	id, err := strconv.Atoi(clusterId[0])
+	if err != nil {
+		writer.WriteHeader(http.StatusNotFound)
+		fmt.Fprint(writer, "Not found!")
+		return
+	}
+
+	clusterName, ok := request.URL.Query()["clusterName"]
+	if !ok {
+		writer.WriteHeader(http.StatusNotFound)
+		fmt.Fprint(writer, "Not found!")
+		return
+	}
+
+	t, err := template.ParseFiles("html/trigger_must_gather.html")
+	if err != nil {
+		writer.WriteHeader(http.StatusNotFound)
+		fmt.Fprint(writer, "Error parsing template")
+		return
+	}
+	dynData := Cluster{Id: id, Name: clusterName[0]}
+	err = t.Execute(writer, dynData)
+	if err != nil {
+		println("Error executing template")
+	}
+}
+
 func startHttpServer(address string) {
 	http.HandleFunc("/", staticPage("html/index.html"))
 	http.HandleFunc("/bootstrap.min.css", staticPage("html/bootstrap.min.css"))
@@ -425,6 +460,7 @@ func startHttpServer(address string) {
 	http.HandleFunc("/store-configuration", storeConfiguration)
 	http.HandleFunc("/enable-configuration", enableConfiguration)
 	http.HandleFunc("/disable-configuration", disableConfiguration)
+	http.HandleFunc("/trigger-must-gather-configuration", triggerMustGatherConfiguration)
 	http.ListenAndServe(address, nil)
 }
 
