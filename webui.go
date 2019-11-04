@@ -1,5 +1,5 @@
 /*
-Copyright ĂĹ  2019 Red Hat, Inc.
+Copyright © 2019 Red Hat, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -441,6 +441,38 @@ func triggerMustGatherConfiguration(writer http.ResponseWriter, request *http.Re
 	}
 }
 
+// POST must-gather to REST API
+func triggerMustGather(writer http.ResponseWriter, request *http.Request) {
+	request.ParseForm()
+	form := request.Form
+
+	clusterId := form.Get("clusterid")
+	clusterName := form.Get("clustername")
+	username := form.Get("username")
+	reason := form.Get("reason")
+	link := form.Get("link")
+
+	log.Println("clusterId", clusterId)
+	log.Println("clusterName", clusterName)
+	log.Println("username", username)
+	log.Println("reason", reason)
+	log.Println("link", link)
+
+	query := "username=" + url.QueryEscape(username) + "&reason=" + url.QueryEscape(reason) + "&link=" + url.QueryEscape(link)
+	log.Println(query)
+	url := controllerURL + API_PREFIX + "client/cluster/" + url.PathEscape(clusterName) + "/trigger/must-gather?" + query
+	log.Println(url)
+
+	err := performWriteRequest(url, "POST", nil)
+	if err != nil {
+		log.Println("Error communicating with the service", err)
+		http.Redirect(writer, request, "/trigger-not-created", 301)
+	} else {
+		log.Println("Trigger has been created")
+		http.Redirect(writer, request, "/trigger-created", 301)
+	}
+}
+
 func startHttpServer(address string) {
 	http.HandleFunc("/", staticPage("html/index.html"))
 	http.HandleFunc("/bootstrap.min.css", staticPage("html/bootstrap.min.css"))
@@ -461,6 +493,7 @@ func startHttpServer(address string) {
 	http.HandleFunc("/enable-configuration", enableConfiguration)
 	http.HandleFunc("/disable-configuration", disableConfiguration)
 	http.HandleFunc("/trigger-must-gather-configuration", triggerMustGatherConfiguration)
+	http.HandleFunc("/trigger-must-gather", triggerMustGather)
 	http.ListenAndServe(address, nil)
 }
 
