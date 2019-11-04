@@ -25,6 +25,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -406,6 +407,72 @@ func disableConfiguration(writer http.ResponseWriter, request *http.Request) {
 	http.Redirect(writer, request, "/list-configurations", 307)
 }
 
+func triggerMustGatherConfiguration(writer http.ResponseWriter, request *http.Request) {
+	clusterId, ok := request.URL.Query()["clusterId"]
+	if !ok {
+		writer.WriteHeader(http.StatusNotFound)
+		fmt.Fprint(writer, "Not found!")
+		return
+	}
+	id, err := strconv.Atoi(clusterId[0])
+	if err != nil {
+		writer.WriteHeader(http.StatusNotFound)
+		fmt.Fprint(writer, "Not found!")
+		return
+	}
+
+	clusterName, ok := request.URL.Query()["clusterName"]
+	if !ok {
+		writer.WriteHeader(http.StatusNotFound)
+		fmt.Fprint(writer, "Not found!")
+		return
+	}
+
+	t, err := template.ParseFiles("html/trigger_must_gather.html")
+	if err != nil {
+		writer.WriteHeader(http.StatusNotFound)
+		fmt.Fprint(writer, "Error parsing template")
+		return
+	}
+	dynData := Cluster{Id: id, Name: clusterName[0]}
+	err = t.Execute(writer, dynData)
+	if err != nil {
+		println("Error executing template")
+	}
+}
+
+// POST must-gather to REST API
+func triggerMustGather(writer http.ResponseWriter, request *http.Request) {
+	request.ParseForm()
+	form := request.Form
+
+	clusterId := form.Get("clusterid")
+	clusterName := form.Get("clustername")
+	username := form.Get("username")
+	reason := form.Get("reason")
+	link := form.Get("link")
+
+	log.Println("clusterId", clusterId)
+	log.Println("clusterName", clusterName)
+	log.Println("username", username)
+	log.Println("reason", reason)
+	log.Println("link", link)
+
+	query := "username=" + url.QueryEscape(username) + "&reason=" + url.QueryEscape(reason) + "&link=" + url.QueryEscape(link)
+	log.Println(query)
+	url := controllerURL + API_PREFIX + "client/cluster/" + url.PathEscape(clusterName) + "/trigger/must-gather?" + query
+	log.Println(url)
+
+	err := performWriteRequest(url, "POST", nil)
+	if err != nil {
+		log.Println("Error communicating with the service", err)
+		http.Redirect(writer, request, "/trigger-not-created", 301)
+	} else {
+		log.Println("Trigger has been created")
+		http.Redirect(writer, request, "/trigger-created", 301)
+	}
+}
+
 func startHttpServer(address string) {
 	http.HandleFunc("/", staticPage("html/index.html"))
 	http.HandleFunc("/bootstrap.min.css", staticPage("html/bootstrap.min.css"))
@@ -425,6 +492,8 @@ func startHttpServer(address string) {
 	http.HandleFunc("/store-configuration", storeConfiguration)
 	http.HandleFunc("/enable-configuration", enableConfiguration)
 	http.HandleFunc("/disable-configuration", disableConfiguration)
+	http.HandleFunc("/trigger-must-gather-configuration", triggerMustGatherConfiguration)
+	http.HandleFunc("/trigger-must-gather", triggerMustGather)
 	http.ListenAndServe(address, nil)
 }
 
