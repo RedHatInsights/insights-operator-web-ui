@@ -1,6 +1,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
-        <title>Cluster list</title>
+        <title>Trigger must-gather</title>
         <meta name="Author" content="Pavel Tisnovsky" />
         <meta name="Generator" content="Golang" />
         <meta http-equiv="Content-type"  content="text/html; charset=utf-8"/>
@@ -20,13 +20,17 @@
                 </div>
             </nav>
                 <div class="panel panel-primary">
-                    <div class="panel-heading">Cluster list</div>
-                        <table class="table table-condensed table-hover table-bordered" rules="all">
-                            <tr><th>ID</th><th>Name</th><th>Actions</th></tr>
-			    {{range .Items}}
-                            <tr><td>{{.Id}}</td><td>{{.Name}}</td><td><a href="/trigger-must-gather-configuration?clusterId={{.Id}}&clusterName={{.Name}}">Trigger must-gather</a></td></tr>
-			    {{end}}
-                        </table>
+                    <div class="panel-heading">Trigger must-gather</div>
+                        <form action='trigger-must-gather' method='post'>
+                            <table class="table table-condensed table-hover table-bordered" rules="all">
+                                <tr><td>Cluster ID</td><td><input type='text' size='15' id='clusterid' name='clusterid' value='{{.Id}}' /></td></tr>
+                                <tr><td>Cluster name</td><td><input type='text' size='15' id='clustername' name='clustername' value='{{.Name}}' /></td></tr>
+                                <tr><td>User name</td><td><input type='text' size='15' id='username' name='username' /></td></tr>
+                                <tr><td>Reason</td><td><input id='reason' size='15' name='reason' /></td></tr>
+                                <tr><td>Link to doc. with customer ACK</td><td><input id='link' size='15' name='reason' /></td></tr>
+                                <tr><td>&nbsp;</td><td><input type='submit' value='Trigger must-gather'></td></tr>
+                            </table>
+                        </form>
                     </div>
                 </div>
             <br/>
