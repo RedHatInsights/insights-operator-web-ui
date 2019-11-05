@@ -55,6 +55,18 @@ type ClusterConfiguration struct {
 	Reason        string `json:"reason"`
 }
 
+type Trigger struct {
+	Id          int    `json:"id"`
+	Type        string `json:"type"`
+	Cluster     string `json:"cluster"`
+	Reason      string `json:"reason"`
+	Link        string `json:"link"`
+	TriggeredAt string `json:"triggered_at"`
+	TriggeredBy string `json:"triggered_by"`
+	Parameters  string `json:"parameters"`
+	Active      int    `json:"active"`
+}
+
 var controllerURL = ""
 
 func performReadRequest(url string) ([]byte, error) {
@@ -133,6 +145,36 @@ func readListOfConfigurations(controllerUrl string, apiPrefix string) ([]Cluster
 		return nil, err
 	}
 	return configurations, nil
+}
+
+func readListOfTriggers(controllerUrl string, apiPrefix string, clusterName string) ([]Trigger, error) {
+	var triggers []Trigger
+	url := controllerUrl + apiPrefix + "client/cluster/" + clusterName + "/trigger"
+	body, err := performReadRequest(url)
+	if err != nil {
+		return nil, err
+	}
+
+	err = json.Unmarshal(body, &triggers)
+	if err != nil {
+		return nil, err
+	}
+	return triggers, nil
+}
+
+func readListOfAllTriggers(controllerUrl string, apiPrefix string) ([]Trigger, error) {
+	var triggers []Trigger
+	url := controllerUrl + apiPrefix + "client/trigger"
+	body, err := performReadRequest(url)
+	if err != nil {
+		return nil, err
+	}
+
+	err = json.Unmarshal(body, &triggers)
+	if err != nil {
+		return nil, err
+	}
+	return triggers, nil
 }
 
 func readConfigurationProfile(controllerUrl string, apiPrefix string, profileId string) (*ConfigurationProfile, error) {
@@ -246,6 +288,10 @@ type ListConfigurationsDynContent struct {
 	Items []ClusterConfiguration
 }
 
+type ListTriggersDynContent struct {
+	Items []Trigger
+}
+
 var epoch = time.Unix(0, 0).Format(time.RFC1123)
 
 var noCacheHeaders = map[string]string{
@@ -275,6 +321,42 @@ func listConfigurations(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	dynData := ListConfigurationsDynContent{Items: configurations}
+	err = t.Execute(writer, dynData)
+	if err != nil {
+		println("Error executing template")
+	}
+}
+
+func listTriggers(writer http.ResponseWriter, request *http.Request) {
+	clusterName, ok := request.URL.Query()["clusterName"]
+	var triggers []Trigger
+	var err error
+
+	if !ok {
+		triggers, err = readListOfAllTriggers(controllerURL, API_PREFIX)
+	} else {
+		triggers, err = readListOfTriggers(controllerURL, API_PREFIX, clusterName[0])
+	}
+
+	// NoCache headers
+	for k, v := range noCacheHeaders {
+		writer.Header().Set(k, v)
+	}
+
+	if err != nil {
+		log.Println("Error reading list of triggers", err)
+		return
+	}
+
+	log.Println(triggers)
+	t, err := template.ParseFiles("html/list_triggers.html")
+	if err != nil {
+		writer.WriteHeader(http.StatusNotFound)
+		fmt.Fprint(writer, "Not found!")
+		return
+	}
+
+	dynData := ListTriggersDynContent{Items: triggers}
 	err = t.Execute(writer, dynData)
 	if err != nil {
 		println("Error executing template")
@@ -485,6 +567,8 @@ func startHttpServer(address string) {
 	http.HandleFunc("/list-clusters", listClusters)
 	http.HandleFunc("/list-profiles", listProfiles)
 	http.HandleFunc("/list-configurations", listConfigurations)
+	http.HandleFunc("/list-all-triggers", listTriggers)
+	http.HandleFunc("/list-triggers", listTriggers)
 	http.HandleFunc("/describe-configuration", describeConfiguration)
 	http.HandleFunc("/new-profile", staticPage("html/new_profile.html"))
 	http.HandleFunc("/new-configuration", staticPage("html/new_configuration.html"))
@@ -494,6 +578,8 @@ func startHttpServer(address string) {
 	http.HandleFunc("/disable-configuration", disableConfiguration)
 	http.HandleFunc("/trigger-must-gather-configuration", triggerMustGatherConfiguration)
 	http.HandleFunc("/trigger-must-gather", triggerMustGather)
+	http.HandleFunc("/trigger-created", staticPage("html/trigger_created.html"))
+	http.HandleFunc("/trigger-not-created", staticPage("html/trigger_not_created.html"))
 	http.ListenAndServe(address, nil)
 }
 
