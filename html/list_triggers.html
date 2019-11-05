@@ -1,6 +1,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
-        <title>Cluster list</title>
+        <title>Trigger list</title>
         <meta name="Author" content="Pavel Tisnovsky" />
         <meta name="Generator" content="Golang" />
         <meta http-equiv="Content-type"  content="text/html; charset=utf-8"/>
@@ -20,14 +20,19 @@
                 </div>
             </nav>
                 <div class="panel panel-primary">
-                    <div class="panel-heading">Cluster list</div>
+                    <div class="panel-heading">Trigger list</div>
                         <table class="table table-condensed table-hover table-bordered" rules="all">
-                            <tr><th>ID</th><th>Name</th><th colspan="2">Actions</th></tr>
+                            <tr><th>ID</th><th>Type</th><th>Cluster</th><th>Reason</th><th>Link</th><th>Triggered at</th><th>Triggered by</th><th>Parameters</th><th>Active</th></tr>
 			    {{range .Items}}
                             <tr><td>{{.Id}}</td>
-                                <td>{{.Name}}</td>
-                                <td><a href="/trigger-must-gather-configuration?clusterId={{.Id}}&clusterName={{.Name}}">Trigger must-gather</a></td>
-                                <td><a href="/list-triggers?clusterId={{.Id}}&clusterName={{.Name}}">List triggers</a></td>
+                                <td>{{.Type}}</td>
+                                <td>{{.Cluster}}</td>
+                                <td>{{.Reason}}</td>
+                                <td>{{.Link}}</td>
+                                <td>{{.TriggeredAt}}</td>
+                                <td>{{.TriggeredBy}}</td>
+                                <td>{{.Parameters}}</td>
+                                <td>{{.Active}}</td>
                             </tr>
 			    {{end}}
                         </table>
