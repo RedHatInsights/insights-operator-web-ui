@@ -1,2 +1,2 @@
 address=":8888"
-controller_url="http://10.34.129.172:8080"
+controller_url="http://localhost:8080"
