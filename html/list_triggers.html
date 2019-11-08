@@ -22,7 +22,7 @@
                 <div class="panel panel-primary">
                     <div class="panel-heading">Trigger list</div>
                         <table class="table table-condensed table-hover table-bordered" rules="all">
-                            <tr><th>ID</th><th>Type</th><th>Cluster</th><th>Reason</th><th>Link</th><th>Triggered at</th><th>Triggered by</th><th>Parameters</th><th>Active</th></tr>
+                            <tr><th>ID</th><th>Type</th><th>Cluster</th><th>Reason</th><th>Link</th><th>Triggered at</th><th>Triggered by</th><th>Active</th><th>Parameters</th></tr>
 			    {{range .Items}}
                             <tr><td>{{.Id}}</td>
                                 <td>{{.Type}}</td>
@@ -31,8 +31,16 @@
                                 <td>{{.Link}}</td>
                                 <td>{{.TriggeredAt}}</td>
                                 <td>{{.TriggeredBy}}</td>
+                                <td>
+                                    <a href="/activate-trigger?id={{.Id}}"><span class="boolean ok">&#x2713</span></a>
+                                    <a href="/deactivate-trigger?id={{.Id}}"><span class="boolean error">&times;</span></a>
+                                    {{ if eq .Active 1 }}
+                                    yes
+                                    {{ else }}
+                                    no
+                                    {{ end }}
+                                </td>
                                 <td>{{.Parameters}}</td>
-                                <td>{{.Active}}</td>
                             </tr>
 			    {{end}}
                         </table>

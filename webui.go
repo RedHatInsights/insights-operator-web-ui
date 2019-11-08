@@ -489,6 +489,46 @@ func disableConfiguration(writer http.ResponseWriter, request *http.Request) {
 	http.Redirect(writer, request, "/list-configurations", 307)
 }
 
+func activateTrigger(writer http.ResponseWriter, request *http.Request) {
+	triggerId, ok := request.URL.Query()["id"]
+	if !ok {
+		writer.WriteHeader(http.StatusNotFound)
+		fmt.Fprint(writer, "Not found!")
+		return
+	}
+	url := controllerURL + API_PREFIX + "client/trigger/" + triggerId[0] + "/activate"
+
+	err := performWriteRequest(url, "PUT", nil)
+	if err != nil {
+		fmt.Println("Error communicating with the service", err)
+		return
+	} else {
+		fmt.Println("Trigger " + triggerId[0] + " has been activated")
+	}
+
+	http.Redirect(writer, request, "/list-triggers", 307)
+}
+
+func deactivateTrigger(writer http.ResponseWriter, request *http.Request) {
+	triggerId, ok := request.URL.Query()["id"]
+	if !ok {
+		writer.WriteHeader(http.StatusNotFound)
+		fmt.Fprint(writer, "Not found!")
+		return
+	}
+	url := controllerURL + API_PREFIX + "client/trigger/" + triggerId[0] + "/deactivate"
+
+	err := performWriteRequest(url, "PUT", nil)
+	if err != nil {
+		fmt.Println("Error communicating with the service", err)
+		return
+	} else {
+		fmt.Println("Trigger " + triggerId[0] + " has been deactivated")
+	}
+
+	http.Redirect(writer, request, "/list-triggers", 307)
+}
+
 func triggerMustGatherConfiguration(writer http.ResponseWriter, request *http.Request) {
 	clusterId, ok := request.URL.Query()["clusterId"]
 	if !ok {
@@ -576,6 +616,8 @@ func startHttpServer(address string) {
 	http.HandleFunc("/store-configuration", storeConfiguration)
 	http.HandleFunc("/enable-configuration", enableConfiguration)
 	http.HandleFunc("/disable-configuration", disableConfiguration)
+	http.HandleFunc("/activate-trigger", activateTrigger)
+	http.HandleFunc("/deactivate-trigger", deactivateTrigger)
 	http.HandleFunc("/trigger-must-gather-configuration", triggerMustGatherConfiguration)
 	http.HandleFunc("/trigger-must-gather", triggerMustGather)
 	http.HandleFunc("/trigger-created", staticPage("html/trigger_created.html"))
