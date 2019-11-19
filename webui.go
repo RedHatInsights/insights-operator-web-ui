@@ -140,6 +140,9 @@ func readListOfClusters(controllerUrl string, apiPrefix string) ([]Cluster, erro
 
 	url := controllerUrl + apiPrefix + "client/cluster"
 	body, err := performReadRequest(url)
+	if err != nil {
+		return nil, err
+	}
 
 	err = json.Unmarshal(body, &clusters)
 	if err != nil {
@@ -153,6 +156,9 @@ func readListOfConfigurationProfiles(controllerUrl string, apiPrefix string) ([]
 
 	url := controllerUrl + apiPrefix + "client/profile"
 	body, err := performReadRequest(url)
+	if err != nil {
+		return nil, err
+	}
 
 	err = json.Unmarshal(body, &profiles)
 	if err != nil {
