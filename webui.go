@@ -499,10 +499,9 @@ func enableConfiguration(writer http.ResponseWriter, request *http.Request) {
 	if err != nil {
 		fmt.Println("Error communicating with the service", err)
 		return
-	} else {
-		fmt.Println("Configuration " + configurationId[0] + " has been enabled")
 	}
 
+	fmt.Println("Configuration " + configurationId[0] + " has been enabled")
 	http.Redirect(writer, request, "/list-configurations", 307)
 }
 
@@ -518,10 +517,9 @@ func disableConfiguration(writer http.ResponseWriter, request *http.Request) {
 	if err != nil {
 		fmt.Println("Error communicating with the service", err)
 		return
-	} else {
-		fmt.Println("Configuration " + configurationId[0] + " has been disabled")
 	}
 
+	fmt.Println("Configuration " + configurationId[0] + " has been disabled")
 	http.Redirect(writer, request, "/list-configurations", 307)
 }
 
@@ -538,10 +536,9 @@ func activateTrigger(writer http.ResponseWriter, request *http.Request) {
 	if err != nil {
 		fmt.Println("Error communicating with the service", err)
 		return
-	} else {
-		fmt.Println("Trigger " + triggerId[0] + " has been activated")
 	}
 
+	fmt.Println("Trigger " + triggerId[0] + " has been activated")
 	http.Redirect(writer, request, "/list-triggers", 307)
 }
 
@@ -558,10 +555,9 @@ func deactivateTrigger(writer http.ResponseWriter, request *http.Request) {
 	if err != nil {
 		fmt.Println("Error communicating with the service", err)
 		return
-	} else {
-		fmt.Println("Trigger " + triggerId[0] + " has been deactivated")
 	}
 
+	fmt.Println("Trigger " + triggerId[0] + " has been deactivated")
 	http.Redirect(writer, request, "/list-triggers", 307)
 }
 
