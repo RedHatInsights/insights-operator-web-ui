@@ -30,6 +30,7 @@ import (
 	"time"
 )
 
+// API_PREFIX represents part of URL that is appended before the actual endpoint address
 const API_PREFIX = "/api/v1/"
 
 // Cluster represents cluster record in the controller service.
@@ -270,6 +271,7 @@ func staticPage(filename string) func(writer http.ResponseWriter, request *http.
 	}
 }
 
+// ListClustersDynContent represents dynamic part of HTML page with list of clusters
 type ListClustersDynContent struct {
 	Items []Cluster
 }
@@ -295,6 +297,7 @@ func listClusters(writer http.ResponseWriter, request *http.Request) {
 	}
 }
 
+// ListProfilesDynContent represents dynamic part of HTML page with list of configuration profiles
 type ListProfilesDynContent struct {
 	Items []ConfigurationProfile
 }
@@ -320,10 +323,12 @@ func listProfiles(writer http.ResponseWriter, request *http.Request) {
 	}
 }
 
+// ListConfigurationsDynContent represents dynamic part of HTML page with list of configurations
 type ListConfigurationsDynContent struct {
 	Items []ClusterConfiguration
 }
 
+// ListTriggersDynContent represents dynamic part of HTML page with list of triggers
 type ListTriggersDynContent struct {
 	Items []Trigger
 }
@@ -399,6 +404,7 @@ func listTriggers(writer http.ResponseWriter, request *http.Request) {
 	}
 }
 
+// DescribeConfigurationDynContent represents dynamic part of HTML page with configuration description
 type DescribeConfigurationDynContent struct {
 	Configuration ConfigurationProfile
 }
@@ -501,6 +507,7 @@ func enableConfiguration(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
+	// everything is ok, configuration has been enabled
 	fmt.Println("Configuration " + configurationId[0] + " has been enabled")
 	http.Redirect(writer, request, "/list-configurations", 307)
 }
@@ -519,6 +526,7 @@ func disableConfiguration(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
+	// everything is ok, configuration has been disabled
 	fmt.Println("Configuration " + configurationId[0] + " has been disabled")
 	http.Redirect(writer, request, "/list-configurations", 307)
 }
@@ -538,6 +546,7 @@ func activateTrigger(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
+	// everything is ok, trigger has been activated
 	fmt.Println("Trigger " + triggerId[0] + " has been activated")
 	http.Redirect(writer, request, "/list-triggers", 307)
 }
@@ -557,6 +566,7 @@ func deactivateTrigger(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
+	// everything is ok, trigger has been deactivated
 	fmt.Println("Trigger " + triggerId[0] + " has been deactivated")
 	http.Redirect(writer, request, "/list-triggers", 307)
 }
