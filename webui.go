@@ -32,7 +32,7 @@ import (
 
 const API_PREFIX = "/api/v1/"
 
-// Representation of cluster record in the controller service.
+// Cluster represents cluster record in the controller service.
 //     ID: unique key
 //     Name: cluster GUID in the following format:
 //         c8590f31-e97e-4b85-b506-c45ce1911a12
@@ -41,7 +41,7 @@ type Cluster struct {
 	Name string `json:"name"`
 }
 
-// Representation of configuration profile record in the controller service.
+// ConfigurationProfile represents configuration profile record in the controller service.
 //     ID: unique key
 //     Configuration: a JSON structure stored in a string
 //     ChangeAt: username of admin that created or updated the configuration
@@ -55,7 +55,7 @@ type ConfigurationProfile struct {
 	Description   string `json:"description"`
 }
 
-// Representation of cluster configuration record in the controller service.
+// ClusterConfiguration represents cluster configuration record in the controller service.
 //     ID: unique key
 //     Cluster: cluster ID (not name)
 //     Configuration: a JSON structure stored in a string
@@ -73,7 +73,7 @@ type ClusterConfiguration struct {
 	Reason        string `json:"reason"`
 }
 
-// Representation of trigger record in the controller service
+// Trigger represents trigger record in the controller service
 //     ID: unique key
 //     Type: ID of trigger type
 //     Cluster: cluster ID (not name)
