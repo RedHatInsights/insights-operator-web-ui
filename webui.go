@@ -30,9 +30,10 @@ import (
 	"time"
 )
 
+// API_PREFIX represents part of URL that is appended before the actual endpoint address
 const API_PREFIX = "/api/v1/"
 
-// Representation of cluster record in the controller service.
+// Cluster represents cluster record in the controller service.
 //     ID: unique key
 //     Name: cluster GUID in the following format:
 //         c8590f31-e97e-4b85-b506-c45ce1911a12
@@ -41,7 +42,7 @@ type Cluster struct {
 	Name string `json:"name"`
 }
 
-// Representation of configuration profile record in the controller service.
+// ConfigurationProfile represents configuration profile record in the controller service.
 //     ID: unique key
 //     Configuration: a JSON structure stored in a string
 //     ChangeAt: username of admin that created or updated the configuration
@@ -55,7 +56,7 @@ type ConfigurationProfile struct {
 	Description   string `json:"description"`
 }
 
-// Representation of cluster configuration record in the controller service.
+// ClusterConfiguration represents cluster configuration record in the controller service.
 //     ID: unique key
 //     Cluster: cluster ID (not name)
 //     Configuration: a JSON structure stored in a string
@@ -73,7 +74,7 @@ type ClusterConfiguration struct {
 	Reason        string `json:"reason"`
 }
 
-// Representation of trigger record in the controller service
+// Trigger represents trigger record in the controller service
 //     ID: unique key
 //     Type: ID of trigger type
 //     Cluster: cluster ID (not name)
@@ -270,6 +271,7 @@ func staticPage(filename string) func(writer http.ResponseWriter, request *http.
 	}
 }
 
+// ListClustersDynContent represents dynamic part of HTML page with list of clusters
 type ListClustersDynContent struct {
 	Items []Cluster
 }
@@ -295,6 +297,7 @@ func listClusters(writer http.ResponseWriter, request *http.Request) {
 	}
 }
 
+// ListProfilesDynContent represents dynamic part of HTML page with list of configuration profiles
 type ListProfilesDynContent struct {
 	Items []ConfigurationProfile
 }
@@ -320,10 +323,12 @@ func listProfiles(writer http.ResponseWriter, request *http.Request) {
 	}
 }
 
+// ListConfigurationsDynContent represents dynamic part of HTML page with list of configurations
 type ListConfigurationsDynContent struct {
 	Items []ClusterConfiguration
 }
 
+// ListTriggersDynContent represents dynamic part of HTML page with list of triggers
 type ListTriggersDynContent struct {
 	Items []Trigger
 }
@@ -399,6 +404,7 @@ func listTriggers(writer http.ResponseWriter, request *http.Request) {
 	}
 }
 
+// DescribeConfigurationDynContent represents dynamic part of HTML page with configuration description
 type DescribeConfigurationDynContent struct {
 	Configuration ConfigurationProfile
 }
@@ -499,10 +505,10 @@ func enableConfiguration(writer http.ResponseWriter, request *http.Request) {
 	if err != nil {
 		fmt.Println("Error communicating with the service", err)
 		return
-	} else {
-		fmt.Println("Configuration " + configurationId[0] + " has been enabled")
 	}
 
+	// everything is ok, configuration has been enabled
+	fmt.Println("Configuration " + configurationId[0] + " has been enabled")
 	http.Redirect(writer, request, "/list-configurations", 307)
 }
 
@@ -518,10 +524,10 @@ func disableConfiguration(writer http.ResponseWriter, request *http.Request) {
 	if err != nil {
 		fmt.Println("Error communicating with the service", err)
 		return
-	} else {
-		fmt.Println("Configuration " + configurationId[0] + " has been disabled")
 	}
 
+	// everything is ok, configuration has been disabled
+	fmt.Println("Configuration " + configurationId[0] + " has been disabled")
 	http.Redirect(writer, request, "/list-configurations", 307)
 }
 
@@ -538,10 +544,10 @@ func activateTrigger(writer http.ResponseWriter, request *http.Request) {
 	if err != nil {
 		fmt.Println("Error communicating with the service", err)
 		return
-	} else {
-		fmt.Println("Trigger " + triggerId[0] + " has been activated")
 	}
 
+	// everything is ok, trigger has been activated
+	fmt.Println("Trigger " + triggerId[0] + " has been activated")
 	http.Redirect(writer, request, "/list-triggers", 307)
 }
 
@@ -558,10 +564,10 @@ func deactivateTrigger(writer http.ResponseWriter, request *http.Request) {
 	if err != nil {
 		fmt.Println("Error communicating with the service", err)
 		return
-	} else {
-		fmt.Println("Trigger " + triggerId[0] + " has been deactivated")
 	}
 
+	// everything is ok, trigger has been deactivated
+	fmt.Println("Trigger " + triggerId[0] + " has been deactivated")
 	http.Redirect(writer, request, "/list-triggers", 307)
 }
 
