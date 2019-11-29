@@ -36,20 +36,6 @@ import (
 // APIPrefix represents part of URL that is appended before the actual endpoint address
 const APIPrefix = "/api/v1/"
 
-// ConfigurationProfile represents configuration profile record in the controller service.
-//     ID: unique key
-//     Configuration: a JSON structure stored in a string
-//     ChangeAt: username of admin that created or updated the configuration
-//     ChangeBy: timestamp of the last configuration change
-//     Description: a string with any comment(s) about the configuration
-type ConfigurationProfile struct {
-	ID            int    `json:"id"`
-	Configuration string `json:"configuration"`
-	ChangedAt     string `json:"changed_at"`
-	ChangedBy     string `json:"changed_by"`
-	Description   string `json:"description"`
-}
-
 // ClusterConfiguration represents cluster configuration record in the controller service.
 //     ID: unique key
 //     Cluster: cluster ID (not name)
@@ -146,8 +132,8 @@ func readListOfClusters(controllerURL string, apiPrefix string) ([]types.Cluster
 	return clusters, nil
 }
 
-func readListOfConfigurationProfiles(controllerURL string, apiPrefix string) ([]ConfigurationProfile, error) {
-	profiles := []ConfigurationProfile{}
+func readListOfConfigurationProfiles(controllerURL string, apiPrefix string) ([]types.ConfigurationProfile, error) {
+	profiles := []types.ConfigurationProfile{}
 
 	url := controllerURL + apiPrefix + "client/profile"
 	body, err := performReadRequest(url)
@@ -208,8 +194,8 @@ func readListOfAllTriggers(controllerURL string, apiPrefix string) ([]Trigger, e
 	return triggers, nil
 }
 
-func readConfigurationProfile(controllerURL string, apiPrefix string, profileID string) (*ConfigurationProfile, error) {
-	var profile ConfigurationProfile
+func readConfigurationProfile(controllerURL string, apiPrefix string, profileID string) (*types.ConfigurationProfile, error) {
+	var profile types.ConfigurationProfile
 	url := controllerURL + apiPrefix + "client/profile/" + profileID
 	body, err := performReadRequest(url)
 	if err != nil {
@@ -293,7 +279,7 @@ func listClusters(writer http.ResponseWriter, request *http.Request) {
 
 // ListProfilesDynContent represents dynamic part of HTML page with list of configuration profiles
 type ListProfilesDynContent struct {
-	Items []ConfigurationProfile
+	Items []types.ConfigurationProfile
 }
 
 func listProfiles(writer http.ResponseWriter, request *http.Request) {
@@ -400,7 +386,7 @@ func listTriggers(writer http.ResponseWriter, request *http.Request) {
 
 // DescribeConfigurationDynContent represents dynamic part of HTML page with configuration description
 type DescribeConfigurationDynContent struct {
-	Configuration ConfigurationProfile
+	Configuration types.ConfigurationProfile
 }
 
 func describeConfiguration(writer http.ResponseWriter, request *http.Request) {
