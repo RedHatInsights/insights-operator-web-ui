@@ -36,48 +36,6 @@ import (
 // APIPrefix represents part of URL that is appended before the actual endpoint address
 const APIPrefix = "/api/v1/"
 
-// ClusterConfiguration represents cluster configuration record in the controller service.
-//     ID: unique key
-//     Cluster: cluster ID (not name)
-//     Configuration: a JSON structure stored in a string
-//     ChangeAt: timestamp of the last configuration change
-//     ChangeBy: username of admin that created or updated the configuration
-//     Active: flag indicating whether the configuration is active or not
-//     Reason: a string with any comment(s) about the cluster configuration
-type ClusterConfiguration struct {
-	ID            int    `json:"id"`
-	Cluster       string `json:"cluster"`
-	Configuration string `json:"configuration"`
-	ChangedAt     string `json:"changed_at"`
-	ChangedBy     string `json:"changed_by"`
-	Active        string `json:"active"`
-	Reason        string `json:"reason"`
-}
-
-// Trigger represents trigger record in the controller service
-//     ID: unique key
-//     Type: ID of trigger type
-//     Cluster: cluster ID (not name)
-//     Reason: a string with any comment(s) about the trigger
-//     Link: link to any document with customer ACK with the trigger
-//     TriggeredAt: timestamp of the last configuration change
-//     TriggeredBy: username of admin that created or updated the trigger
-//     AckedAt: timestamp where the insights operator acked the trigger
-//     Parameters: parameters that needs to be pass to trigger code
-//     Active: flag indicating whether the trigger is still active or not
-type Trigger struct {
-	ID          int    `json:"id"`
-	Type        string `json:"type"`
-	Cluster     string `json:"cluster"`
-	Reason      string `json:"reason"`
-	Link        string `json:"link"`
-	TriggeredAt string `json:"triggered_at"`
-	TriggeredBy string `json:"triggered_by"`
-	AckedAt     string `json:"acked_at"`
-	Parameters  string `json:"parameters"`
-	Active      int    `json:"active"`
-}
-
 var controllerURL = ""
 
 func performReadRequest(url string) ([]byte, error) {
@@ -148,8 +106,8 @@ func readListOfConfigurationProfiles(controllerURL string, apiPrefix string) ([]
 	return profiles, nil
 }
 
-func readListOfConfigurations(controllerURL string, apiPrefix string) ([]ClusterConfiguration, error) {
-	configurations := []ClusterConfiguration{}
+func readListOfConfigurations(controllerURL string, apiPrefix string) ([]types.ClusterConfiguration, error) {
+	configurations := []types.ClusterConfiguration{}
 
 	url := controllerURL + apiPrefix + "client/configuration"
 	body, err := performReadRequest(url)
@@ -164,8 +122,8 @@ func readListOfConfigurations(controllerURL string, apiPrefix string) ([]Cluster
 	return configurations, nil
 }
 
-func readListOfTriggers(controllerURL string, apiPrefix string, clusterName string) ([]Trigger, error) {
-	var triggers []Trigger
+func readListOfTriggers(controllerURL string, apiPrefix string, clusterName string) ([]types.Trigger, error) {
+	var triggers []types.Trigger
 	url := controllerURL + apiPrefix + "client/cluster/" + clusterName + "/trigger"
 	body, err := performReadRequest(url)
 	if err != nil {
@@ -179,8 +137,8 @@ func readListOfTriggers(controllerURL string, apiPrefix string, clusterName stri
 	return triggers, nil
 }
 
-func readListOfAllTriggers(controllerURL string, apiPrefix string) ([]Trigger, error) {
-	var triggers []Trigger
+func readListOfAllTriggers(controllerURL string, apiPrefix string) ([]types.Trigger, error) {
+	var triggers []types.Trigger
 	url := controllerURL + apiPrefix + "client/trigger"
 	body, err := performReadRequest(url)
 	if err != nil {
@@ -305,12 +263,12 @@ func listProfiles(writer http.ResponseWriter, request *http.Request) {
 
 // ListConfigurationsDynContent represents dynamic part of HTML page with list of configurations
 type ListConfigurationsDynContent struct {
-	Items []ClusterConfiguration
+	Items []types.ClusterConfiguration
 }
 
 // ListTriggersDynContent represents dynamic part of HTML page with list of triggers
 type ListTriggersDynContent struct {
-	Items []Trigger
+	Items []types.Trigger
 }
 
 var epoch = time.Unix(0, 0).Format(time.RFC1123)
@@ -350,7 +308,7 @@ func listConfigurations(writer http.ResponseWriter, request *http.Request) {
 
 func listTriggers(writer http.ResponseWriter, request *http.Request) {
 	clusterName, ok := request.URL.Query()["clusterName"]
-	var triggers []Trigger
+	var triggers []types.Trigger
 	var err error
 
 	if !ok {
