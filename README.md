@@ -1,7 +1,7 @@
 # insights-operator-web-ui
 Web UI for insights operator instrumentation service
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/RedHatInsights/insights-operator-web-ui)](https://goreportcard.com/report/github.com/RedHatInsights/insights-operator-web-ui)
+[![Go Report Card](https://goreportcard.com/badge/github.com/RedHatInsights/insights-operator-web-ui)](https://goreportcard.com/report/github.com/RedHatInsights/insights-operator-web-ui) [![Build Status](https://travis-ci.org/RedHatInsights/insights-operator-web-ui.svg?branch=master)](https://travis-ci.org/RedHatInsights/insights-web-ui)
 
 ## Description
 
