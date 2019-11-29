@@ -19,6 +19,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/spf13/viper"
+	"github.com/tisnik/insights-operator-web-ui/types"
 	"html/template"
 	"io"
 	"io/ioutil"
@@ -34,15 +35,6 @@ import (
 
 // APIPrefix represents part of URL that is appended before the actual endpoint address
 const APIPrefix = "/api/v1/"
-
-// Cluster represents cluster record in the controller service.
-//     ID: unique key
-//     Name: cluster GUID in the following format:
-//         c8590f31-e97e-4b85-b506-c45ce1911a12
-type Cluster struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
-}
 
 // ConfigurationProfile represents configuration profile record in the controller service.
 //     ID: unique key
@@ -138,8 +130,8 @@ func performWriteRequest(url string, method string, payload io.Reader) error {
 	return nil
 }
 
-func readListOfClusters(controllerURL string, apiPrefix string) ([]Cluster, error) {
-	clusters := []Cluster{}
+func readListOfClusters(controllerURL string, apiPrefix string) ([]types.Cluster, error) {
+	clusters := []types.Cluster{}
 
 	url := controllerURL + apiPrefix + "client/cluster"
 	body, err := performReadRequest(url)
@@ -275,7 +267,7 @@ func staticPage(filename string) func(writer http.ResponseWriter, request *http.
 
 // ListClustersDynContent represents dynamic part of HTML page with list of clusters
 type ListClustersDynContent struct {
-	Items []Cluster
+	Items []types.Cluster
 }
 
 func listClusters(writer http.ResponseWriter, request *http.Request) {
@@ -600,7 +592,7 @@ func triggerMustGatherConfiguration(writer http.ResponseWriter, request *http.Re
 		fmt.Fprint(writer, "Error parsing template")
 		return
 	}
-	dynData := Cluster{ID: id, Name: clusterName[0]}
+	dynData := types.Cluster{ID: id, Name: clusterName[0]}
 	err = t.Execute(writer, dynData)
 	if err != nil {
 		println("Error executing template")
