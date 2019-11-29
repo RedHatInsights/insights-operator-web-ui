@@ -19,6 +19,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/spf13/viper"
+	"github.com/tisnik/insights-operator-web-ui/types"
 	"html/template"
 	"io"
 	"io/ioutil"
@@ -34,71 +35,6 @@ import (
 
 // APIPrefix represents part of URL that is appended before the actual endpoint address
 const APIPrefix = "/api/v1/"
-
-// Cluster represents cluster record in the controller service.
-//     ID: unique key
-//     Name: cluster GUID in the following format:
-//         c8590f31-e97e-4b85-b506-c45ce1911a12
-type Cluster struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
-}
-
-// ConfigurationProfile represents configuration profile record in the controller service.
-//     ID: unique key
-//     Configuration: a JSON structure stored in a string
-//     ChangeAt: username of admin that created or updated the configuration
-//     ChangeBy: timestamp of the last configuration change
-//     Description: a string with any comment(s) about the configuration
-type ConfigurationProfile struct {
-	ID            int    `json:"id"`
-	Configuration string `json:"configuration"`
-	ChangedAt     string `json:"changed_at"`
-	ChangedBy     string `json:"changed_by"`
-	Description   string `json:"description"`
-}
-
-// ClusterConfiguration represents cluster configuration record in the controller service.
-//     ID: unique key
-//     Cluster: cluster ID (not name)
-//     Configuration: a JSON structure stored in a string
-//     ChangeAt: timestamp of the last configuration change
-//     ChangeBy: username of admin that created or updated the configuration
-//     Active: flag indicating whether the configuration is active or not
-//     Reason: a string with any comment(s) about the cluster configuration
-type ClusterConfiguration struct {
-	ID            int    `json:"id"`
-	Cluster       string `json:"cluster"`
-	Configuration string `json:"configuration"`
-	ChangedAt     string `json:"changed_at"`
-	ChangedBy     string `json:"changed_by"`
-	Active        string `json:"active"`
-	Reason        string `json:"reason"`
-}
-
-// Trigger represents trigger record in the controller service
-//     ID: unique key
-//     Type: ID of trigger type
-//     Cluster: cluster ID (not name)
-//     Reason: a string with any comment(s) about the trigger
-//     Link: link to any document with customer ACK with the trigger
-//     TriggeredAt: timestamp of the last configuration change
-//     TriggeredBy: username of admin that created or updated the trigger
-//     AckedAt: timestamp where the insights operator acked the trigger
-//     Parameters: parameters that needs to be pass to trigger code
-//     Active: flag indicating whether the trigger is still active or not
-type Trigger struct {
-	ID          int    `json:"id"`
-	Type        string `json:"type"`
-	Cluster     string `json:"cluster"`
-	Reason      string `json:"reason"`
-	Link        string `json:"link"`
-	TriggeredAt string `json:"triggered_at"`
-	TriggeredBy string `json:"triggered_by"`
-	AckedAt     string `json:"acked_at"`
-	Parameters  string `json:"parameters"`
-	Active      int    `json:"active"`
-}
 
 var controllerURL = ""
 
@@ -138,8 +74,8 @@ func performWriteRequest(url string, method string, payload io.Reader) error {
 	return nil
 }
 
-func readListOfClusters(controllerURL string, apiPrefix string) ([]Cluster, error) {
-	clusters := []Cluster{}
+func readListOfClusters(controllerURL string, apiPrefix string) ([]types.Cluster, error) {
+	clusters := []types.Cluster{}
 
 	url := controllerURL + apiPrefix + "client/cluster"
 	body, err := performReadRequest(url)
@@ -154,8 +90,8 @@ func readListOfClusters(controllerURL string, apiPrefix string) ([]Cluster, erro
 	return clusters, nil
 }
 
-func readListOfConfigurationProfiles(controllerURL string, apiPrefix string) ([]ConfigurationProfile, error) {
-	profiles := []ConfigurationProfile{}
+func readListOfConfigurationProfiles(controllerURL string, apiPrefix string) ([]types.ConfigurationProfile, error) {
+	profiles := []types.ConfigurationProfile{}
 
 	url := controllerURL + apiPrefix + "client/profile"
 	body, err := performReadRequest(url)
@@ -170,8 +106,8 @@ func readListOfConfigurationProfiles(controllerURL string, apiPrefix string) ([]
 	return profiles, nil
 }
 
-func readListOfConfigurations(controllerURL string, apiPrefix string) ([]ClusterConfiguration, error) {
-	configurations := []ClusterConfiguration{}
+func readListOfConfigurations(controllerURL string, apiPrefix string) ([]types.ClusterConfiguration, error) {
+	configurations := []types.ClusterConfiguration{}
 
 	url := controllerURL + apiPrefix + "client/configuration"
 	body, err := performReadRequest(url)
@@ -186,8 +122,8 @@ func readListOfConfigurations(controllerURL string, apiPrefix string) ([]Cluster
 	return configurations, nil
 }
 
-func readListOfTriggers(controllerURL string, apiPrefix string, clusterName string) ([]Trigger, error) {
-	var triggers []Trigger
+func readListOfTriggers(controllerURL string, apiPrefix string, clusterName string) ([]types.Trigger, error) {
+	var triggers []types.Trigger
 	url := controllerURL + apiPrefix + "client/cluster/" + clusterName + "/trigger"
 	body, err := performReadRequest(url)
 	if err != nil {
@@ -201,8 +137,8 @@ func readListOfTriggers(controllerURL string, apiPrefix string, clusterName stri
 	return triggers, nil
 }
 
-func readListOfAllTriggers(controllerURL string, apiPrefix string) ([]Trigger, error) {
-	var triggers []Trigger
+func readListOfAllTriggers(controllerURL string, apiPrefix string) ([]types.Trigger, error) {
+	var triggers []types.Trigger
 	url := controllerURL + apiPrefix + "client/trigger"
 	body, err := performReadRequest(url)
 	if err != nil {
@@ -216,8 +152,8 @@ func readListOfAllTriggers(controllerURL string, apiPrefix string) ([]Trigger, e
 	return triggers, nil
 }
 
-func readConfigurationProfile(controllerURL string, apiPrefix string, profileID string) (*ConfigurationProfile, error) {
-	var profile ConfigurationProfile
+func readConfigurationProfile(controllerURL string, apiPrefix string, profileID string) (*types.ConfigurationProfile, error) {
+	var profile types.ConfigurationProfile
 	url := controllerURL + apiPrefix + "client/profile/" + profileID
 	body, err := performReadRequest(url)
 	if err != nil {
@@ -275,7 +211,7 @@ func staticPage(filename string) func(writer http.ResponseWriter, request *http.
 
 // ListClustersDynContent represents dynamic part of HTML page with list of clusters
 type ListClustersDynContent struct {
-	Items []Cluster
+	Items []types.Cluster
 }
 
 func listClusters(writer http.ResponseWriter, request *http.Request) {
@@ -301,7 +237,7 @@ func listClusters(writer http.ResponseWriter, request *http.Request) {
 
 // ListProfilesDynContent represents dynamic part of HTML page with list of configuration profiles
 type ListProfilesDynContent struct {
-	Items []ConfigurationProfile
+	Items []types.ConfigurationProfile
 }
 
 func listProfiles(writer http.ResponseWriter, request *http.Request) {
@@ -327,12 +263,12 @@ func listProfiles(writer http.ResponseWriter, request *http.Request) {
 
 // ListConfigurationsDynContent represents dynamic part of HTML page with list of configurations
 type ListConfigurationsDynContent struct {
-	Items []ClusterConfiguration
+	Items []types.ClusterConfiguration
 }
 
 // ListTriggersDynContent represents dynamic part of HTML page with list of triggers
 type ListTriggersDynContent struct {
-	Items []Trigger
+	Items []types.Trigger
 }
 
 var epoch = time.Unix(0, 0).Format(time.RFC1123)
@@ -372,7 +308,7 @@ func listConfigurations(writer http.ResponseWriter, request *http.Request) {
 
 func listTriggers(writer http.ResponseWriter, request *http.Request) {
 	clusterName, ok := request.URL.Query()["clusterName"]
-	var triggers []Trigger
+	var triggers []types.Trigger
 	var err error
 
 	if !ok {
@@ -408,7 +344,7 @@ func listTriggers(writer http.ResponseWriter, request *http.Request) {
 
 // DescribeConfigurationDynContent represents dynamic part of HTML page with configuration description
 type DescribeConfigurationDynContent struct {
-	Configuration ConfigurationProfile
+	Configuration types.ConfigurationProfile
 }
 
 func describeConfiguration(writer http.ResponseWriter, request *http.Request) {
@@ -600,7 +536,7 @@ func triggerMustGatherConfiguration(writer http.ResponseWriter, request *http.Re
 		fmt.Fprint(writer, "Error parsing template")
 		return
 	}
-	dynData := Cluster{ID: id, Name: clusterName[0]}
+	dynData := types.Cluster{ID: id, Name: clusterName[0]}
 	err = t.Execute(writer, dynData)
 	if err != nil {
 		println("Error executing template")
