@@ -25,6 +25,8 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -669,9 +671,20 @@ func startHTTPServer(address string) {
 
 func main() {
 	log.Println("Reading configuration")
+	configFile, specified := os.LookupEnv("INSIGHTS_WEB_UI_CONFIG_FILE")
+	if specified {
+		// we need to separate the directory name and filename without extension
+		directory, basename := filepath.Split(configFile)
+		file := strings.TrimSuffix(basename, filepath.Ext(basename))
+		// parse the configuration
+		viper.SetConfigName(file)
+		viper.AddConfigPath(directory)
+	} else {
+		// parse the configuration
+		viper.SetConfigName("config")
+		viper.AddConfigPath(".")
+	}
 
-	viper.SetConfigName("config")
-	viper.AddConfigPath(".")
 	err := viper.ReadInConfig()
 	if err != nil {
 		panic(fmt.Errorf("Fatal error config file: %s", err))
