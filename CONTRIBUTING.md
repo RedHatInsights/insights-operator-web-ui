@@ -11,7 +11,7 @@ Other code quality metrics are measured as well via [Go Report Card](https://gor
 
 ### Naming conventions
 
-Please try to follow [Style guideline for Go packages](https://rakyll.org/style-packages/) and [Package names](https://rakyll.org/style-packages/)
+Please try to follow [Style guideline for Go packages](https://rakyll.org/style-packages/) and [Package names](https://blog.golang.org/package-names)
 
 
 ## Submitting a pull request
