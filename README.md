@@ -43,3 +43,7 @@ Configuration is stored in `config.toml`. ATM two options needs to be specified:
 * `gocyclo` to report all functions and methods with too high cyclomatic complexity. The cyclomatic complexity of a function is calculated according to the following rules: 1 is the base complexity of a function +1 for each 'if', 'for', 'case', '&&' or '||' Go Report Card warns on functions with cyclomatic complexity > 9
 
 History of checks done by CI is available at [RedHatInsights / insights-operator-web-ui](https://travis-ci.org/RedHatInsights/insights-operator-web-ui).
+
+## Contribution
+
+Plasase look into document [CONTRIBUTING.md](CONTRIBUTING.md) that contains all information about how to contribute to this project.
