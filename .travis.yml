@@ -4,16 +4,14 @@ go:
 
 jobs:
   include:
-    - before_install: go build
-      script:
-        - go test ./...
     - stage: style
       script:
-        - ./.travis.gofmt.sh
-        - ./.travis.govet.sh
-        - ./.travis.golint.sh
-        - ./.travis.gocyclo.sh
+        - make style
+    - stage: unit tests
+      script:
+        - make test
+        - go tool cover -func=coverage.out
 
 stages:
   - style
-  - test
+  - unit tests
