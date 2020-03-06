@@ -1,6 +1,6 @@
-go build
+#!/usr/bin/env bash
 
-if [ $? -eq 0 ]
+if go build
 then
     echo "Build ok"
     ./insights-operator-web-ui
