@@ -13,10 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-if go build
-then
-    echo "Build ok"
-    ./insights-operator-web-ui
-else
-    echo "Build failed"
-fi
+go test -race -covermode=atomic -coverprofile coverage.out "$(go list ./... | grep -v tests)" "$@"
+exit_code=$?
+
+echo "Test coverage:"
+go tool cover -func=coverage.out
+
+exit $exit_code

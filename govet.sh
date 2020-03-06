@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 # Copyright 2020 Red Hat, Inc
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,10 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-if go build
-then
-    echo "Build ok"
-    ./insights-operator-web-ui
-else
-    echo "Build failed"
-fi
+cd "$(dirname "$0")" || exit
+# shellcheck disable=SC2046
+go vet $(go list ./...)

@@ -47,7 +47,12 @@ func performReadRequest(url string) ([]byte, error) {
 		return nil, fmt.Errorf("Expected HTTP status 200 OK, got %d", response.StatusCode)
 	}
 	body, readErr := ioutil.ReadAll(response.Body)
-	defer response.Body.Close()
+	defer func() {
+		err := response.Body.Close()
+		if err != nil {
+			log.Println(err)
+		}
+	}()
 
 	if readErr != nil {
 		return nil, fmt.Errorf("Unable to read response body")
@@ -190,15 +195,33 @@ func getContentType(filename string) string {
 	return "text/html"
 }
 
+func writeResponse(writer http.ResponseWriter, message string) {
+	_, err := fmt.Fprint(writer, message)
+	if err != nil {
+		log.Println("Error sending response", err)
+	}
+}
+
+func notFoundResponse(writer http.ResponseWriter) {
+	writeResponse(writer, "Not found!")
+}
+
+func errorParsingTemplateResponse(writer http.ResponseWriter) {
+	writeResponse(writer, "Error parsing template")
+}
+
 func sendStaticPage(writer http.ResponseWriter, filename string) {
 	body, err := ioutil.ReadFile(filename)
 	if err == nil {
 		writer.Header().Set("Server", "A Go Web Server")
 		writer.Header().Set("Content-Type", getContentType(filename))
-		fmt.Fprint(writer, string(body))
+		_, err = fmt.Fprint(writer, string(body))
+		if err != nil {
+			log.Println("Error sending response body", err)
+		}
 	} else {
 		writer.WriteHeader(http.StatusNotFound)
-		fmt.Fprint(writer, "Not found!")
+		notFoundResponse(writer)
 	}
 }
 
@@ -224,7 +247,7 @@ func listClusters(writer http.ResponseWriter, request *http.Request) {
 	t, err := template.ParseFiles("html/list_clusters.html")
 	if err != nil {
 		writer.WriteHeader(http.StatusNotFound)
-		fmt.Fprint(writer, "Not found!")
+		notFoundResponse(writer)
 		return
 	}
 
@@ -250,7 +273,7 @@ func listProfiles(writer http.ResponseWriter, request *http.Request) {
 	t, err := template.ParseFiles("html/list_profiles.html")
 	if err != nil {
 		writer.WriteHeader(http.StatusNotFound)
-		fmt.Fprint(writer, "Not found!")
+		notFoundResponse(writer)
 		return
 	}
 
@@ -295,7 +318,7 @@ func listConfigurations(writer http.ResponseWriter, request *http.Request) {
 	t, err := template.ParseFiles("html/list_configurations.html")
 	if err != nil {
 		writer.WriteHeader(http.StatusNotFound)
-		fmt.Fprint(writer, "Not found!")
+		notFoundResponse(writer)
 		return
 	}
 
@@ -331,7 +354,7 @@ func listTriggers(writer http.ResponseWriter, request *http.Request) {
 	t, err := template.ParseFiles("html/list_triggers.html")
 	if err != nil {
 		writer.WriteHeader(http.StatusNotFound)
-		fmt.Fprint(writer, "Not found!")
+		notFoundResponse(writer)
 		return
 	}
 
@@ -351,7 +374,7 @@ func describeConfiguration(writer http.ResponseWriter, request *http.Request) {
 	configID, ok := request.URL.Query()["configuration"]
 	if !ok {
 		writer.WriteHeader(http.StatusNotFound)
-		fmt.Fprint(writer, "Not found!")
+		notFoundResponse(writer)
 		return
 	}
 
@@ -359,14 +382,14 @@ func describeConfiguration(writer http.ResponseWriter, request *http.Request) {
 	fmt.Println(configuration)
 	if err != nil {
 		writer.WriteHeader(http.StatusNotFound)
-		fmt.Fprint(writer, "Not found!")
+		notFoundResponse(writer)
 		return
 	}
 
 	t, err := template.ParseFiles("html/describe_configuration.html")
 	if err != nil {
 		writer.WriteHeader(http.StatusNotFound)
-		fmt.Fprint(writer, "Error parsing template")
+		errorParsingTemplateResponse(writer)
 		return
 	}
 
@@ -378,7 +401,12 @@ func describeConfiguration(writer http.ResponseWriter, request *http.Request) {
 }
 
 func storeProfile(writer http.ResponseWriter, request *http.Request) {
-	request.ParseForm()
+	err := request.ParseForm()
+	if err != nil {
+		log.Println("Error handling form", err)
+		notFoundResponse(writer)
+		return
+	}
 	form := request.Form
 
 	username := form.Get("username")
@@ -392,7 +420,7 @@ func storeProfile(writer http.ResponseWriter, request *http.Request) {
 	query := "username=" + url.QueryEscape(username) + "&description=" + url.QueryEscape(description)
 	url := controllerURL + APIPrefix + "client/profile?" + query
 
-	err := performWriteRequest(url, "POST", strings.NewReader(configuration))
+	err = performWriteRequest(url, "POST", strings.NewReader(configuration))
 	if err != nil {
 		log.Println("Error communicating with the service", err)
 		http.Redirect(writer, request, "/profile-not-created", 301)
@@ -403,7 +431,12 @@ func storeProfile(writer http.ResponseWriter, request *http.Request) {
 }
 
 func storeConfiguration(writer http.ResponseWriter, request *http.Request) {
-	request.ParseForm()
+	err := request.ParseForm()
+	if err != nil {
+		log.Println("Error handling form", err)
+		notFoundResponse(writer)
+		return
+	}
 	form := request.Form
 
 	username := form.Get("username")
@@ -421,7 +454,7 @@ func storeConfiguration(writer http.ResponseWriter, request *http.Request) {
 	query := "username=" + url.QueryEscape(username) + "&reason=" + url.QueryEscape(reason) + "&description=" + url.QueryEscape(description)
 	url := controllerURL + APIPrefix + "client/cluster/" + url.PathEscape(cluster) + "/configuration?" + query
 
-	err := performWriteRequest(url, "POST", strings.NewReader(configuration))
+	err = performWriteRequest(url, "POST", strings.NewReader(configuration))
 	if err != nil {
 		log.Println("Error communicating with the service", err)
 		http.Redirect(writer, request, "/configuration-not-created", 301)
@@ -435,7 +468,7 @@ func enableConfiguration(writer http.ResponseWriter, request *http.Request) {
 	configurationID, ok := request.URL.Query()["id"]
 	if !ok {
 		writer.WriteHeader(http.StatusNotFound)
-		fmt.Fprint(writer, "Not found!")
+		notFoundResponse(writer)
 		return
 	}
 	url := controllerURL + APIPrefix + "client/configuration/" + configurationID[0] + "/enable"
@@ -454,7 +487,7 @@ func disableConfiguration(writer http.ResponseWriter, request *http.Request) {
 	configurationID, ok := request.URL.Query()["id"]
 	if !ok {
 		writer.WriteHeader(http.StatusNotFound)
-		fmt.Fprint(writer, "Not found!")
+		notFoundResponse(writer)
 		return
 	}
 	url := controllerURL + APIPrefix + "client/configuration/" + configurationID[0] + "/disable"
@@ -473,7 +506,7 @@ func activateTrigger(writer http.ResponseWriter, request *http.Request) {
 	triggerID, ok := request.URL.Query()["id"]
 	if !ok {
 		writer.WriteHeader(http.StatusNotFound)
-		fmt.Fprint(writer, "Not found!")
+		notFoundResponse(writer)
 		return
 	}
 	url := controllerURL + APIPrefix + "client/trigger/" + triggerID[0] + "/activate"
@@ -493,7 +526,7 @@ func deactivateTrigger(writer http.ResponseWriter, request *http.Request) {
 	triggerID, ok := request.URL.Query()["id"]
 	if !ok {
 		writer.WriteHeader(http.StatusNotFound)
-		fmt.Fprint(writer, "Not found!")
+		notFoundResponse(writer)
 		return
 	}
 	url := controllerURL + APIPrefix + "client/trigger/" + triggerID[0] + "/deactivate"
@@ -513,27 +546,27 @@ func triggerMustGatherConfiguration(writer http.ResponseWriter, request *http.Re
 	clusterID, ok := request.URL.Query()["clusterID"]
 	if !ok {
 		writer.WriteHeader(http.StatusNotFound)
-		fmt.Fprint(writer, "Not found!")
+		notFoundResponse(writer)
 		return
 	}
 	id, err := strconv.Atoi(clusterID[0])
 	if err != nil {
 		writer.WriteHeader(http.StatusNotFound)
-		fmt.Fprint(writer, "Not found!")
+		notFoundResponse(writer)
 		return
 	}
 
 	clusterName, ok := request.URL.Query()["clusterName"]
 	if !ok {
 		writer.WriteHeader(http.StatusNotFound)
-		fmt.Fprint(writer, "Not found!")
+		notFoundResponse(writer)
 		return
 	}
 
 	t, err := template.ParseFiles("html/trigger_must_gather.html")
 	if err != nil {
 		writer.WriteHeader(http.StatusNotFound)
-		fmt.Fprint(writer, "Error parsing template")
+		errorParsingTemplateResponse(writer)
 		return
 	}
 	dynData := types.Cluster{ID: id, Name: clusterName[0]}
@@ -545,7 +578,12 @@ func triggerMustGatherConfiguration(writer http.ResponseWriter, request *http.Re
 
 // POST must-gather to REST API
 func triggerMustGather(writer http.ResponseWriter, request *http.Request) {
-	request.ParseForm()
+	err := request.ParseForm()
+	if err != nil {
+		log.Println("Error handling form", err)
+		notFoundResponse(writer)
+		return
+	}
 	form := request.Form
 
 	clusterID := form.Get("clusterid")
@@ -565,7 +603,7 @@ func triggerMustGather(writer http.ResponseWriter, request *http.Request) {
 	url := controllerURL + APIPrefix + "client/cluster/" + url.PathEscape(clusterName) + "/trigger/must-gather?" + query
 	log.Println(url)
 
-	err := performWriteRequest(url, "POST", nil)
+	err = performWriteRequest(url, "POST", nil)
 	if err != nil {
 		log.Println("Error communicating with the service", err)
 		http.Redirect(writer, request, "/trigger-not-created", 301)
@@ -602,7 +640,12 @@ func startHTTPServer(address string) {
 	http.HandleFunc("/trigger-must-gather", triggerMustGather)
 	http.HandleFunc("/trigger-created", staticPage("html/trigger_created.html"))
 	http.HandleFunc("/trigger-not-created", staticPage("html/trigger_not_created.html"))
-	http.ListenAndServe(address, nil)
+
+	// try to start the server
+	err := http.ListenAndServe(address, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func main() {
