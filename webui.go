@@ -215,7 +215,7 @@ func sendStaticPage(writer http.ResponseWriter, filename string) {
 	if err == nil {
 		writer.Header().Set("Server", "A Go Web Server")
 		writer.Header().Set("Content-Type", getContentType(filename))
-		err = fmt.Fprint(writer, string(body))
+		_, err = fmt.Fprint(writer, string(body))
 		if err != nil {
 			log.Println("Error sending response body", err)
 		}
