@@ -47,7 +47,12 @@ func performReadRequest(url string) ([]byte, error) {
 		return nil, fmt.Errorf("Expected HTTP status 200 OK, got %d", response.StatusCode)
 	}
 	body, readErr := ioutil.ReadAll(response.Body)
-	defer response.Body.Close()
+	defer func() {
+		err := response.Body.Close()
+		if err != nil {
+			log.Println(err)
+		}
+	}()
 
 	if readErr != nil {
 		return nil, fmt.Errorf("Unable to read response body")
@@ -190,11 +195,19 @@ func getContentType(filename string) string {
 	return "text/html"
 }
 
-func notFoundResponse(writer http.ResponseWriter) {
-	_, err := fmt.Fprint(writer, "Not found!")
+func writeResponse(writer http.ResponseWriter, message string) {
+	_, err := fmt.Fprint(writer, message)
 	if err != nil {
 		log.Println("Error sending response", err)
 	}
+}
+
+func notFoundResponse(writer http.ResponseWriter) {
+	writeResponse(writer, "Not found!")
+}
+
+func errorParsingTemplateResponse(writer http.ResponseWriter) {
+	writeResponse(writer, "Error parsing template")
 }
 
 func sendStaticPage(writer http.ResponseWriter, filename string) {
@@ -202,7 +215,10 @@ func sendStaticPage(writer http.ResponseWriter, filename string) {
 	if err == nil {
 		writer.Header().Set("Server", "A Go Web Server")
 		writer.Header().Set("Content-Type", getContentType(filename))
-		fmt.Fprint(writer, string(body))
+		err = fmt.Fprint(writer, string(body))
+		if err != nil {
+			log.Println("Error sending response body", err)
+		}
 	} else {
 		writer.WriteHeader(http.StatusNotFound)
 		notFoundResponse(writer)
@@ -373,7 +389,7 @@ func describeConfiguration(writer http.ResponseWriter, request *http.Request) {
 	t, err := template.ParseFiles("html/describe_configuration.html")
 	if err != nil {
 		writer.WriteHeader(http.StatusNotFound)
-		fmt.Fprint(writer, "Error parsing template")
+		errorParsingTemplateResponse(writer)
 		return
 	}
 
@@ -550,7 +566,7 @@ func triggerMustGatherConfiguration(writer http.ResponseWriter, request *http.Re
 	t, err := template.ParseFiles("html/trigger_must_gather.html")
 	if err != nil {
 		writer.WriteHeader(http.StatusNotFound)
-		fmt.Fprint(writer, "Error parsing template")
+		errorParsingTemplateResponse(writer)
 		return
 	}
 	dynData := types.Cluster{ID: id, Name: clusterName[0]}
