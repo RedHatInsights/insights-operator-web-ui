@@ -190,6 +190,13 @@ func getContentType(filename string) string {
 	return "text/html"
 }
 
+func notFoundResponse(writer http.ResponseWriter) {
+	err := fmt.Fprint(writer, "Not found!")
+	if err != nil {
+		log.Println("Error sending response", err)
+	}
+}
+
 func sendStaticPage(writer http.ResponseWriter, filename string) {
 	body, err := ioutil.ReadFile(filename)
 	if err == nil {
@@ -198,7 +205,7 @@ func sendStaticPage(writer http.ResponseWriter, filename string) {
 		fmt.Fprint(writer, string(body))
 	} else {
 		writer.WriteHeader(http.StatusNotFound)
-		fmt.Fprint(writer, "Not found!")
+		notFoundResponse(writer)
 	}
 }
 
@@ -224,7 +231,7 @@ func listClusters(writer http.ResponseWriter, request *http.Request) {
 	t, err := template.ParseFiles("html/list_clusters.html")
 	if err != nil {
 		writer.WriteHeader(http.StatusNotFound)
-		fmt.Fprint(writer, "Not found!")
+		notFoundResponse(writer)
 		return
 	}
 
@@ -250,7 +257,7 @@ func listProfiles(writer http.ResponseWriter, request *http.Request) {
 	t, err := template.ParseFiles("html/list_profiles.html")
 	if err != nil {
 		writer.WriteHeader(http.StatusNotFound)
-		fmt.Fprint(writer, "Not found!")
+		notFoundResponse(writer)
 		return
 	}
 
@@ -295,7 +302,7 @@ func listConfigurations(writer http.ResponseWriter, request *http.Request) {
 	t, err := template.ParseFiles("html/list_configurations.html")
 	if err != nil {
 		writer.WriteHeader(http.StatusNotFound)
-		fmt.Fprint(writer, "Not found!")
+		notFoundResponse(writer)
 		return
 	}
 
@@ -331,7 +338,7 @@ func listTriggers(writer http.ResponseWriter, request *http.Request) {
 	t, err := template.ParseFiles("html/list_triggers.html")
 	if err != nil {
 		writer.WriteHeader(http.StatusNotFound)
-		fmt.Fprint(writer, "Not found!")
+		notFoundResponse(writer)
 		return
 	}
 
@@ -351,7 +358,7 @@ func describeConfiguration(writer http.ResponseWriter, request *http.Request) {
 	configID, ok := request.URL.Query()["configuration"]
 	if !ok {
 		writer.WriteHeader(http.StatusNotFound)
-		fmt.Fprint(writer, "Not found!")
+		notFoundResponse(writer)
 		return
 	}
 
@@ -359,7 +366,7 @@ func describeConfiguration(writer http.ResponseWriter, request *http.Request) {
 	fmt.Println(configuration)
 	if err != nil {
 		writer.WriteHeader(http.StatusNotFound)
-		fmt.Fprint(writer, "Not found!")
+		notFoundResponse(writer)
 		return
 	}
 
@@ -435,7 +442,7 @@ func enableConfiguration(writer http.ResponseWriter, request *http.Request) {
 	configurationID, ok := request.URL.Query()["id"]
 	if !ok {
 		writer.WriteHeader(http.StatusNotFound)
-		fmt.Fprint(writer, "Not found!")
+		notFoundResponse(writer)
 		return
 	}
 	url := controllerURL + APIPrefix + "client/configuration/" + configurationID[0] + "/enable"
@@ -454,7 +461,7 @@ func disableConfiguration(writer http.ResponseWriter, request *http.Request) {
 	configurationID, ok := request.URL.Query()["id"]
 	if !ok {
 		writer.WriteHeader(http.StatusNotFound)
-		fmt.Fprint(writer, "Not found!")
+		notFoundResponse(writer)
 		return
 	}
 	url := controllerURL + APIPrefix + "client/configuration/" + configurationID[0] + "/disable"
@@ -473,7 +480,7 @@ func activateTrigger(writer http.ResponseWriter, request *http.Request) {
 	triggerID, ok := request.URL.Query()["id"]
 	if !ok {
 		writer.WriteHeader(http.StatusNotFound)
-		fmt.Fprint(writer, "Not found!")
+		notFoundResponse(writer)
 		return
 	}
 	url := controllerURL + APIPrefix + "client/trigger/" + triggerID[0] + "/activate"
@@ -493,7 +500,7 @@ func deactivateTrigger(writer http.ResponseWriter, request *http.Request) {
 	triggerID, ok := request.URL.Query()["id"]
 	if !ok {
 		writer.WriteHeader(http.StatusNotFound)
-		fmt.Fprint(writer, "Not found!")
+		notFoundResponse(writer)
 		return
 	}
 	url := controllerURL + APIPrefix + "client/trigger/" + triggerID[0] + "/deactivate"
@@ -513,20 +520,20 @@ func triggerMustGatherConfiguration(writer http.ResponseWriter, request *http.Re
 	clusterID, ok := request.URL.Query()["clusterID"]
 	if !ok {
 		writer.WriteHeader(http.StatusNotFound)
-		fmt.Fprint(writer, "Not found!")
+		notFoundResponse(writer)
 		return
 	}
 	id, err := strconv.Atoi(clusterID[0])
 	if err != nil {
 		writer.WriteHeader(http.StatusNotFound)
-		fmt.Fprint(writer, "Not found!")
+		notFoundResponse(writer)
 		return
 	}
 
 	clusterName, ok := request.URL.Query()["clusterName"]
 	if !ok {
 		writer.WriteHeader(http.StatusNotFound)
-		fmt.Fprint(writer, "Not found!")
+		notFoundResponse(writer)
 		return
 	}
 
