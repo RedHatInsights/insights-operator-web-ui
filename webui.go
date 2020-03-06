@@ -191,7 +191,7 @@ func getContentType(filename string) string {
 }
 
 func notFoundResponse(writer http.ResponseWriter) {
-	err := fmt.Fprint(writer, "Not found!")
+	_, err := fmt.Fprint(writer, "Not found!")
 	if err != nil {
 		log.Println("Error sending response", err)
 	}
@@ -385,7 +385,12 @@ func describeConfiguration(writer http.ResponseWriter, request *http.Request) {
 }
 
 func storeProfile(writer http.ResponseWriter, request *http.Request) {
-	request.ParseForm()
+	err := request.ParseForm()
+	if err != nil {
+		log.Println("Error handling form", err)
+		notFoundResponse(writer)
+		return
+	}
 	form := request.Form
 
 	username := form.Get("username")
@@ -399,7 +404,7 @@ func storeProfile(writer http.ResponseWriter, request *http.Request) {
 	query := "username=" + url.QueryEscape(username) + "&description=" + url.QueryEscape(description)
 	url := controllerURL + APIPrefix + "client/profile?" + query
 
-	err := performWriteRequest(url, "POST", strings.NewReader(configuration))
+	err = performWriteRequest(url, "POST", strings.NewReader(configuration))
 	if err != nil {
 		log.Println("Error communicating with the service", err)
 		http.Redirect(writer, request, "/profile-not-created", 301)
@@ -410,7 +415,12 @@ func storeProfile(writer http.ResponseWriter, request *http.Request) {
 }
 
 func storeConfiguration(writer http.ResponseWriter, request *http.Request) {
-	request.ParseForm()
+	err := request.ParseForm()
+	if err != nil {
+		log.Println("Error handling form", err)
+		notFoundResponse(writer)
+		return
+	}
 	form := request.Form
 
 	username := form.Get("username")
@@ -428,7 +438,7 @@ func storeConfiguration(writer http.ResponseWriter, request *http.Request) {
 	query := "username=" + url.QueryEscape(username) + "&reason=" + url.QueryEscape(reason) + "&description=" + url.QueryEscape(description)
 	url := controllerURL + APIPrefix + "client/cluster/" + url.PathEscape(cluster) + "/configuration?" + query
 
-	err := performWriteRequest(url, "POST", strings.NewReader(configuration))
+	err = performWriteRequest(url, "POST", strings.NewReader(configuration))
 	if err != nil {
 		log.Println("Error communicating with the service", err)
 		http.Redirect(writer, request, "/configuration-not-created", 301)
@@ -552,7 +562,12 @@ func triggerMustGatherConfiguration(writer http.ResponseWriter, request *http.Re
 
 // POST must-gather to REST API
 func triggerMustGather(writer http.ResponseWriter, request *http.Request) {
-	request.ParseForm()
+	err := request.ParseForm()
+	if err != nil {
+		log.Println("Error handling form", err)
+		notFoundResponse(writer)
+		return
+	}
 	form := request.Form
 
 	clusterID := form.Get("clusterid")
@@ -572,7 +587,7 @@ func triggerMustGather(writer http.ResponseWriter, request *http.Request) {
 	url := controllerURL + APIPrefix + "client/cluster/" + url.PathEscape(clusterName) + "/trigger/must-gather?" + query
 	log.Println(url)
 
-	err := performWriteRequest(url, "POST", nil)
+	err = performWriteRequest(url, "POST", nil)
 	if err != nil {
 		log.Println("Error communicating with the service", err)
 		http.Redirect(writer, request, "/trigger-not-created", 301)
@@ -609,7 +624,12 @@ func startHTTPServer(address string) {
 	http.HandleFunc("/trigger-must-gather", triggerMustGather)
 	http.HandleFunc("/trigger-created", staticPage("html/trigger_created.html"))
 	http.HandleFunc("/trigger-not-created", staticPage("html/trigger_not_created.html"))
-	http.ListenAndServe(address, nil)
+
+	// try to start the server
+	err := http.ListenAndServe(address, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func main() {
