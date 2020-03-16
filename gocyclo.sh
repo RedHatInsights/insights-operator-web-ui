@@ -13,6 +13,5 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
 go get github.com/fzipp/gocyclo
 gocyclo -over 9 -avg .
