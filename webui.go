@@ -420,7 +420,7 @@ func storeProfile(writer http.ResponseWriter, request *http.Request) {
 	query := "username=" + url.QueryEscape(username) + "&description=" + url.QueryEscape(description)
 	url := controllerURL + APIPrefix + "client/profile?" + query
 
-	err = performWriteRequest(url, "POST", strings.NewReader(configuration))
+	err = performWriteRequest(url, http.MethodPost, strings.NewReader(configuration))
 	if err != nil {
 		log.Println("Error communicating with the service", err)
 		http.Redirect(writer, request, "/profile-not-created", 301)
@@ -454,7 +454,7 @@ func storeConfiguration(writer http.ResponseWriter, request *http.Request) {
 	query := "username=" + url.QueryEscape(username) + "&reason=" + url.QueryEscape(reason) + "&description=" + url.QueryEscape(description)
 	url := controllerURL + APIPrefix + "client/cluster/" + url.PathEscape(cluster) + "/configuration?" + query
 
-	err = performWriteRequest(url, "POST", strings.NewReader(configuration))
+	err = performWriteRequest(url, http.MethodPost, strings.NewReader(configuration))
 	if err != nil {
 		log.Println("Error communicating with the service", err)
 		http.Redirect(writer, request, "/configuration-not-created", 301)
@@ -603,7 +603,7 @@ func triggerMustGather(writer http.ResponseWriter, request *http.Request) {
 	url := controllerURL + APIPrefix + "client/cluster/" + url.PathEscape(clusterName) + "/trigger/must-gather?" + query
 	log.Println(url)
 
-	err = performWriteRequest(url, "POST", nil)
+	err = performWriteRequest(url, http.MethodPost, nil)
 	if err != nil {
 		log.Println("Error communicating with the service", err)
 		http.Redirect(writer, request, "/trigger-not-created", 301)
