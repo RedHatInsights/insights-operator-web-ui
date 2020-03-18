@@ -38,6 +38,10 @@ const APIPrefix = "/api/v1/"
 
 var controllerURL = ""
 
+const (
+	profileNotCreatedEndpoint = "/profile-not-created"
+)
+
 func performReadRequest(url string) ([]byte, error) {
 	response, err := http.Get(url)
 	if err != nil {
@@ -423,7 +427,7 @@ func storeProfile(writer http.ResponseWriter, request *http.Request) {
 	err = performWriteRequest(url, http.MethodPost, strings.NewReader(configuration))
 	if err != nil {
 		log.Println("Error communicating with the service", err)
-		http.Redirect(writer, request, "/profile-not-created", 301)
+		http.Redirect(writer, request, profileNotCreatedEndpoint, 301)
 	} else {
 		log.Println("Configuration profile has been created")
 		http.Redirect(writer, request, "/profile-created", 301)
@@ -621,7 +625,7 @@ func startHTTPServer(address string) {
 	http.HandleFunc("/configuration-created", staticPage("html/configuration_created.html"))
 	http.HandleFunc("/configuration-not-created", staticPage("html/configuration_not_created.html"))
 	http.HandleFunc("/profile-created", staticPage("html/profile_created.html"))
-	http.HandleFunc("/profile-not-created", staticPage("html/profile_not_created.html"))
+	http.HandleFunc(profileNotCreatedEndpoint, staticPage("html/profile_not_created.html"))
 	http.HandleFunc("/list-clusters", listClusters)
 	http.HandleFunc("/list-profiles", listProfiles)
 	http.HandleFunc("/list-configurations", listConfigurations)
