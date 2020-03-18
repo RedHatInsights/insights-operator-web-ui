@@ -38,6 +38,13 @@ const APIPrefix = "/api/v1/"
 
 var controllerURL = ""
 
+const (
+	configurationNotCreatedEndpoint = "/configuration-not-created"
+	listConfigurationsEndpoint      = "/list-configurations"
+	profileCreatedEndpoint          = "/profile-created"
+	profileNotCreatedEndpoint       = "/profile-not-created"
+)
+
 func performReadRequest(url string) ([]byte, error) {
 	response, err := http.Get(url)
 	if err != nil {
@@ -423,10 +430,10 @@ func storeProfile(writer http.ResponseWriter, request *http.Request) {
 	err = performWriteRequest(url, http.MethodPost, strings.NewReader(configuration))
 	if err != nil {
 		log.Println("Error communicating with the service", err)
-		http.Redirect(writer, request, "/profile-not-created", 301)
+		http.Redirect(writer, request, profileNotCreatedEndpoint, 301)
 	} else {
 		log.Println("Configuration profile has been created")
-		http.Redirect(writer, request, "/profile-created", 301)
+		http.Redirect(writer, request, profileCreatedEndpoint, 301)
 	}
 }
 
@@ -457,7 +464,7 @@ func storeConfiguration(writer http.ResponseWriter, request *http.Request) {
 	err = performWriteRequest(url, http.MethodPost, strings.NewReader(configuration))
 	if err != nil {
 		log.Println("Error communicating with the service", err)
-		http.Redirect(writer, request, "/configuration-not-created", 301)
+		http.Redirect(writer, request, configurationNotCreatedEndpoint, 301)
 	} else {
 		log.Println("Configuration has been created")
 		http.Redirect(writer, request, "/configuration-created", 301)
@@ -480,7 +487,7 @@ func enableConfiguration(writer http.ResponseWriter, request *http.Request) {
 
 	// everything is ok, configuration has been enabled
 	fmt.Println("Configuration " + configurationID[0] + " has been enabled")
-	http.Redirect(writer, request, "/list-configurations", 307)
+	http.Redirect(writer, request, listConfigurationsEndpoint, 307)
 }
 
 func disableConfiguration(writer http.ResponseWriter, request *http.Request) {
@@ -499,7 +506,7 @@ func disableConfiguration(writer http.ResponseWriter, request *http.Request) {
 
 	// everything is ok, configuration has been disabled
 	fmt.Println("Configuration " + configurationID[0] + " has been disabled")
-	http.Redirect(writer, request, "/list-configurations", 307)
+	http.Redirect(writer, request, listConfigurationsEndpoint, 307)
 }
 
 func activateTrigger(writer http.ResponseWriter, request *http.Request) {
@@ -619,12 +626,12 @@ func startHTTPServer(address string) {
 	http.HandleFunc("/bootstrap.min.js", staticPage("html/bootstrap.min.js"))
 	http.HandleFunc("/ccx.css", staticPage("html/ccx.css"))
 	http.HandleFunc("/configuration-created", staticPage("html/configuration_created.html"))
-	http.HandleFunc("/configuration-not-created", staticPage("html/configuration_not_created.html"))
-	http.HandleFunc("/profile-created", staticPage("html/profile_created.html"))
-	http.HandleFunc("/profile-not-created", staticPage("html/profile_not_created.html"))
+	http.HandleFunc(configurationNotCreatedEndpoint, staticPage("html/configuration_not_created.html"))
+	http.HandleFunc(profileCreatedEndpoint, staticPage("html/profile_created.html"))
+	http.HandleFunc(profileNotCreatedEndpoint, staticPage("html/profile_not_created.html"))
 	http.HandleFunc("/list-clusters", listClusters)
 	http.HandleFunc("/list-profiles", listProfiles)
-	http.HandleFunc("/list-configurations", listConfigurations)
+	http.HandleFunc(listConfigurationsEndpoint, listConfigurations)
 	http.HandleFunc("/list-all-triggers", listTriggers)
 	http.HandleFunc("/list-triggers", listTriggers)
 	http.HandleFunc("/describe-configuration", describeConfiguration)
