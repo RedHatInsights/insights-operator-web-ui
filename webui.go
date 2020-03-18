@@ -39,6 +39,7 @@ const APIPrefix = "/api/v1/"
 var controllerURL = ""
 
 const (
+	profileCreatedEndpoint    = "/profile-created"
 	profileNotCreatedEndpoint = "/profile-not-created"
 )
 
@@ -430,7 +431,7 @@ func storeProfile(writer http.ResponseWriter, request *http.Request) {
 		http.Redirect(writer, request, profileNotCreatedEndpoint, 301)
 	} else {
 		log.Println("Configuration profile has been created")
-		http.Redirect(writer, request, "/profile-created", 301)
+		http.Redirect(writer, request, profileCreatedEndpoint, 301)
 	}
 }
 
@@ -624,7 +625,7 @@ func startHTTPServer(address string) {
 	http.HandleFunc("/ccx.css", staticPage("html/ccx.css"))
 	http.HandleFunc("/configuration-created", staticPage("html/configuration_created.html"))
 	http.HandleFunc("/configuration-not-created", staticPage("html/configuration_not_created.html"))
-	http.HandleFunc("/profile-created", staticPage("html/profile_created.html"))
+	http.HandleFunc(profileCreatedEndpoint, staticPage("html/profile_created.html"))
 	http.HandleFunc(profileNotCreatedEndpoint, staticPage("html/profile_not_created.html"))
 	http.HandleFunc("/list-clusters", listClusters)
 	http.HandleFunc("/list-profiles", listProfiles)
