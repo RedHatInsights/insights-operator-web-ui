@@ -39,8 +39,9 @@ const APIPrefix = "/api/v1/"
 var controllerURL = ""
 
 const (
-	profileCreatedEndpoint    = "/profile-created"
-	profileNotCreatedEndpoint = "/profile-not-created"
+	listConfigurationsEndpoint = "/list-configurations"
+	profileCreatedEndpoint     = "/profile-created"
+	profileNotCreatedEndpoint  = "/profile-not-created"
 )
 
 func performReadRequest(url string) ([]byte, error) {
@@ -485,7 +486,7 @@ func enableConfiguration(writer http.ResponseWriter, request *http.Request) {
 
 	// everything is ok, configuration has been enabled
 	fmt.Println("Configuration " + configurationID[0] + " has been enabled")
-	http.Redirect(writer, request, "/list-configurations", 307)
+	http.Redirect(writer, request, listConfigurationsEndpoint, 307)
 }
 
 func disableConfiguration(writer http.ResponseWriter, request *http.Request) {
@@ -504,7 +505,7 @@ func disableConfiguration(writer http.ResponseWriter, request *http.Request) {
 
 	// everything is ok, configuration has been disabled
 	fmt.Println("Configuration " + configurationID[0] + " has been disabled")
-	http.Redirect(writer, request, "/list-configurations", 307)
+	http.Redirect(writer, request, listConfigurationsEndpoint, 307)
 }
 
 func activateTrigger(writer http.ResponseWriter, request *http.Request) {
@@ -629,7 +630,7 @@ func startHTTPServer(address string) {
 	http.HandleFunc(profileNotCreatedEndpoint, staticPage("html/profile_not_created.html"))
 	http.HandleFunc("/list-clusters", listClusters)
 	http.HandleFunc("/list-profiles", listProfiles)
-	http.HandleFunc("/list-configurations", listConfigurations)
+	http.HandleFunc(listConfigurationsEndpoint, listConfigurations)
 	http.HandleFunc("/list-all-triggers", listTriggers)
 	http.HandleFunc("/list-triggers", listTriggers)
 	http.HandleFunc("/describe-configuration", describeConfiguration)
