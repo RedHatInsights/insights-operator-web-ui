@@ -2,6 +2,14 @@
 
 SOURCES:=$(shell find . -name '*.go')
 
+default: build
+
+clean: ## Run go clean
+	@go clean
+
+build: ## Run go build
+	@go build
+
 fmt: ## Run go fmt -w for all sources
 	@echo "Running go formatting"
 	./gofmt.sh
@@ -22,14 +30,22 @@ ineffassign: ## Run ineffassign checker
 	@echo "Running ineffassign checker"
 	./ineffassign.sh
 
-goerrcheck: ## Run error checks linter
-	@echo "Running error checks linter"
+shellcheck: ## Run shellcheck
+	shellcheck **/*.sh
+
+errcheck: ## Run errcheck
+	@echo "Running errcheck"
 	./goerrcheck.sh
 
-shellcheck: ## Run shellcheck
-	shellcheck *.sh
+goconst: ## Run goconst checker
+	@echo "Running goconst checker"
+	./goconst.sh
 
-style: fmt vet lint cyclo ineffassign goerrcheck shellcheck ## Run all the formatting related commands (fmt, vet, lint, cyclo)
+abcgo: ## Run ABC metrics checker
+	@echo "Run ABC metrics checker"
+	./abcgo.sh
+
+style: fmt vet lint cyclo shellcheck errcheck ineffassign abcgo ## Run all the formatting related commands (fmt, vet, lint, cyclo)
 
 test: clean build ## Run the unit tests
 	@go test -coverprofile coverage.out $(shell go list ./... | grep -v tests)
