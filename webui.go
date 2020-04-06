@@ -46,6 +46,7 @@ const (
 )
 
 func performReadRequest(url string) ([]byte, error) {
+	// #nosec G107
 	response, err := http.Get(url)
 	if err != nil {
 		return nil, fmt.Errorf("Communication error with the server %v", err)
@@ -218,6 +219,7 @@ func errorParsingTemplateResponse(writer http.ResponseWriter) {
 }
 
 func sendStaticPage(writer http.ResponseWriter, filename string) {
+	// #nosec G304
 	body, err := ioutil.ReadFile(filename)
 	if err == nil {
 		writer.Header().Set("Server", "A Go Web Server")
