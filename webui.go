@@ -45,6 +45,9 @@ const (
 
 	// ContentTypeCSS represents content type text/css used in HTTP responses
 	ContentTypeCSS = "text/css"
+
+	// errorExecutingTemplate is a message displayed when any template can't be executed for whatever reason
+	errorExecutingTemplate = "Error executing template"
 )
 
 var controllerURL = ""
@@ -274,7 +277,7 @@ func listClusters(writer http.ResponseWriter, request *http.Request) {
 	dynData := ListClustersDynContent{Items: clusters}
 	err = t.Execute(writer, dynData)
 	if err != nil {
-		println("Error executing template")
+		println(errorExecutingTemplate)
 	}
 }
 
@@ -300,7 +303,7 @@ func listProfiles(writer http.ResponseWriter, request *http.Request) {
 	dynData := ListProfilesDynContent{Items: profiles}
 	err = t.Execute(writer, dynData)
 	if err != nil {
-		println("Error executing template")
+		println(errorExecutingTemplate)
 	}
 }
 
@@ -345,7 +348,7 @@ func listConfigurations(writer http.ResponseWriter, request *http.Request) {
 	dynData := ListConfigurationsDynContent{Items: configurations}
 	err = t.Execute(writer, dynData)
 	if err != nil {
-		println("Error executing template")
+		println(errorExecutingTemplate)
 	}
 }
 
@@ -381,7 +384,7 @@ func listTriggers(writer http.ResponseWriter, request *http.Request) {
 	dynData := ListTriggersDynContent{Items: triggers}
 	err = t.Execute(writer, dynData)
 	if err != nil {
-		println("Error executing template")
+		println(errorExecutingTemplate)
 	}
 }
 
@@ -416,7 +419,7 @@ func describeConfiguration(writer http.ResponseWriter, request *http.Request) {
 	dynData := DescribeConfigurationDynContent{Configuration: *configuration}
 	err = t.Execute(writer, dynData)
 	if err != nil {
-		println("Error executing template")
+		println(errorExecutingTemplate)
 	}
 }
 
@@ -592,7 +595,7 @@ func triggerMustGatherConfiguration(writer http.ResponseWriter, request *http.Re
 	dynData := types.Cluster{ID: id, Name: clusterName[0]}
 	err = t.Execute(writer, dynData)
 	if err != nil {
-		println("Error executing template")
+		println(errorExecutingTemplate)
 	}
 }
 
