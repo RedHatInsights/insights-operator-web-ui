@@ -59,11 +59,15 @@ const (
 	profileNotCreatedEndpoint       = "/profile-not-created"
 )
 
+func serverCommunicationError(err error) error {
+	return fmt.Errorf("Communication error with the server %v", err)
+}
+
 func performReadRequest(url string) ([]byte, error) {
 	// #nosec G107
 	response, err := http.Get(url)
 	if err != nil {
-		return nil, fmt.Errorf("Communication error with the server %v", err)
+		return nil, serverCommunicationError(err)
 	}
 	if response.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("Expected HTTP status 200 OK, got %d", response.StatusCode)
@@ -93,7 +97,7 @@ func performWriteRequest(url string, method string, payload io.Reader) error {
 
 	response, err := client.Do(request)
 	if err != nil {
-		return fmt.Errorf("Communication error with the server %v", err)
+		return serverCommunicationError(err)
 	}
 	if response.StatusCode != http.StatusOK && response.StatusCode != http.StatusCreated && response.StatusCode != http.StatusAccepted {
 		return fmt.Errorf("Expected HTTP status 200 OK, 201 Created or 202 Accepted, got %d", response.StatusCode)
