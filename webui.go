@@ -499,7 +499,7 @@ func enableConfiguration(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 	url := controllerURL + APIPrefix + "client/configuration/" + configurationID[0] + "/enable"
-	err := performWriteRequest(url, "PUT", nil)
+	err := performWriteRequest(url, http.MethodPut, nil)
 	if err != nil {
 		fmt.Println("Error communicating with the service", err)
 		return
@@ -518,7 +518,7 @@ func disableConfiguration(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 	url := controllerURL + APIPrefix + "client/configuration/" + configurationID[0] + "/disable"
-	err := performWriteRequest(url, "PUT", nil)
+	err := performWriteRequest(url, http.MethodPut, nil)
 	if err != nil {
 		fmt.Println("Error communicating with the service", err)
 		return
@@ -538,7 +538,7 @@ func activateTrigger(writer http.ResponseWriter, request *http.Request) {
 	}
 	url := controllerURL + APIPrefix + "client/trigger/" + triggerID[0] + "/activate"
 
-	err := performWriteRequest(url, "PUT", nil)
+	err := performWriteRequest(url, http.MethodPut, nil)
 	if err != nil {
 		fmt.Println("Error communicating with the service", err)
 		return
@@ -558,7 +558,7 @@ func deactivateTrigger(writer http.ResponseWriter, request *http.Request) {
 	}
 	url := controllerURL + APIPrefix + "client/trigger/" + triggerID[0] + "/deactivate"
 
-	err := performWriteRequest(url, "PUT", nil)
+	err := performWriteRequest(url, http.MethodPut, nil)
 	if err != nil {
 		fmt.Println("Error communicating with the service", err)
 		return
