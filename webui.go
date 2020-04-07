@@ -33,8 +33,13 @@ import (
 	"time"
 )
 
-// APIPrefix represents part of URL that is appended before the actual endpoint address
-const APIPrefix = "/api/v1/"
+const (
+	// APIPrefix represents part of URL that is appended before the actual endpoint address
+	APIPrefix = "/api/v1/"
+
+	// Content type text/html used in HTTP responses
+	ContentTypeHTML = "text/html"
+)
 
 var controllerURL = ""
 
@@ -194,13 +199,13 @@ func readClusterConfigurationByID(controllerURL string, apiPrefix string, config
 func getContentType(filename string) string {
 	// TODO: to map
 	if strings.HasSuffix(filename, ".html") {
-		return "text/html"
+		return ContentTypeHTML
 	} else if strings.HasSuffix(filename, ".js") {
 		return "application/javascript"
 	} else if strings.HasSuffix(filename, ".css") {
 		return "text/css"
 	}
-	return "text/html"
+	return ContentTypeHTML
 }
 
 func writeResponse(writer http.ResponseWriter, message string) {
