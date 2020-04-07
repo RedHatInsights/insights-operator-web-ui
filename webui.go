@@ -39,6 +39,12 @@ const (
 
 	// ContentTypeHTML represents content type text/html used in HTTP responses
 	ContentTypeHTML = "text/html"
+
+	// ContentTypeJavaScript represents content type application/javascript used in HTTP responses
+	ContentTypeJavaScript = "application/json"
+
+	// ContentTypeCSS represents content type text/css used in HTTP responses
+	ContentTypeCSS = "text/css"
 )
 
 var controllerURL = ""
@@ -201,9 +207,9 @@ func getContentType(filename string) string {
 	if strings.HasSuffix(filename, ".html") {
 		return ContentTypeHTML
 	} else if strings.HasSuffix(filename, ".js") {
-		return "application/javascript"
+		return ContentTypeJavaScript
 	} else if strings.HasSuffix(filename, ".css") {
-		return "text/css"
+		return ContentTypeCSS
 	}
 	return ContentTypeHTML
 }
