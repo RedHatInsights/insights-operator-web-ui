@@ -37,7 +37,7 @@ const (
 	// APIPrefix represents part of URL that is appended before the actual endpoint address
 	APIPrefix = "/api/v1/"
 
-	// Content type text/html used in HTTP responses
+	// ContentTypeHTML represents content type text/html used in HTTP responses
 	ContentTypeHTML = "text/html"
 )
 
