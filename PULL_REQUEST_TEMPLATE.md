@@ -14,9 +14,10 @@ Please delete options that are not relevant.
 - This change requires a documentation update
 - Refactor (refactoring code, removing useless files)
 - Unit tests (no changes in the code)
+- REST API tests
 - Benchmarks (no changes in the code)
 - Documentation update
 
 ## Testing steps
-Please describe how the change was tested locally. If, for some reason, the testing was not done or not done fully, please describe what are the testing steps.
 
+Please describe how the change was tested locally. If, for some reason, the testing was not done or not done fully, please describe what are the testing steps.
