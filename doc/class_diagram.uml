@@ -1,0 +1,66 @@
+@startuml
+namespace main {
+    class DescribeConfigurationDynContent << (S,Aquamarine) >> {
+        + Configuration types.ConfigurationProfile
+
+    }
+    class ListClustersDynContent << (S,Aquamarine) >> {
+        + Items []types.Cluster
+
+    }
+    class ListConfigurationsDynContent << (S,Aquamarine) >> {
+        + Items []types.ClusterConfiguration
+
+    }
+    class ListProfilesDynContent << (S,Aquamarine) >> {
+        + Items []types.ConfigurationProfile
+
+    }
+    class ListTriggersDynContent << (S,Aquamarine) >> {
+        + Items []types.Trigger
+
+    }
+}
+
+
+namespace types {
+    class Cluster << (S,Aquamarine) >> {
+        + ID int
+        + Name string
+
+    }
+    class ClusterConfiguration << (S,Aquamarine) >> {
+        + ID int
+        + Cluster string
+        + Configuration string
+        + ChangedAt string
+        + ChangedBy string
+        + Active string
+        + Reason string
+
+    }
+    class ConfigurationProfile << (S,Aquamarine) >> {
+        + ID int
+        + Configuration string
+        + ChangedAt string
+        + ChangedBy string
+        + Description string
+
+    }
+    class Trigger << (S,Aquamarine) >> {
+        + ID int
+        + Type string
+        + Cluster string
+        + Reason string
+        + Link string
+        + TriggeredAt string
+        + TriggeredBy string
+        + AckedAt string
+        + Parameters string
+        + Active int
+
+    }
+}
+
+
+@enduml
