@@ -1,14 +1,17 @@
 .PHONY: help clean build fmt lint vet run test style cyclo
 
 SOURCES:=$(shell find . -name '*.go')
+BINARY:=insights-operator-web-ui
 
 default: build
 
 clean: ## Run go clean
 	@go clean
 
-build: ## Run go build
-	@go build
+build: ${BINARY} ## Keep this rule for compatibility
+
+${BINARY}: ${SOURCES}
+	./build.sh
 
 fmt: ## Run go fmt -w for all sources
 	@echo "Running go formatting"
@@ -50,6 +53,9 @@ abcgo: ## Run ABC metrics checker
 	./abcgo.sh
 
 style: fmt vet lint cyclo shellcheck errcheck gosec ineffassign abcgo ## Run all the formatting related commands (fmt, vet, lint, cyclo)
+
+run: clean build ## Build the project and executes the binary
+	./${BINARY}
 
 test: clean build ## Run the unit tests
 	@go test -coverprofile coverage.out $(shell go list ./... | grep -v tests)
