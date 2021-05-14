@@ -52,7 +52,8 @@ const (
 
 // URL and form parameters
 const (
-	linkParameter = "link"
+	linkParameter   = "link"
+	reasonParameter = "reason"
 )
 
 var controllerURL = ""
@@ -621,13 +622,13 @@ func triggerMustGather(writer http.ResponseWriter, request *http.Request) {
 	clusterID := form.Get("clusterid")
 	clusterName := form.Get("clustername")
 	username := form.Get("username")
-	reason := form.Get("reason")
+	reason := form.Get(reasonParameter)
 	link := form.Get(linkParameter)
 
 	log.Println("clusterID", clusterID)
 	log.Println("clusterName", clusterName)
 	log.Println("username", username)
-	log.Println("reason", reason)
+	log.Println(reasonParameter, reason)
 	log.Println(linkParameter, link)
 
 	query := "username=" + url.QueryEscape(username) + "&reason=" + url.QueryEscape(reason) + "&link=" + url.QueryEscape(link)
