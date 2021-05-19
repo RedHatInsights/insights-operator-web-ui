@@ -56,14 +56,16 @@ const (
 	reasonParameter = "reason"
 )
 
-var controllerURL = ""
-
+// REST API endpoints
 const (
 	configurationNotCreatedEndpoint = "/configuration-not-created"
 	listConfigurationsEndpoint      = "/list-configurations"
 	profileCreatedEndpoint          = "/profile-created"
 	profileNotCreatedEndpoint       = "/profile-not-created"
+	triggerNotCreatedEndpoint       = "/trigger-not-created"
 )
+
+var controllerURL = ""
 
 func serverCommunicationError(err error) error {
 	return fmt.Errorf("Communication error with the server %v", err)
@@ -639,7 +641,7 @@ func triggerMustGather(writer http.ResponseWriter, request *http.Request) {
 	err = performWriteRequest(url, http.MethodPost, nil)
 	if err != nil {
 		log.Println("Error communicating with the service", err)
-		http.Redirect(writer, request, "/trigger-not-created", 301)
+		http.Redirect(writer, request, triggerNotCreatedEndpoint, 301)
 	} else {
 		log.Println("Trigger has been created")
 		http.Redirect(writer, request, "/trigger-created", 301)
@@ -672,7 +674,7 @@ func startHTTPServer(address string) {
 	http.HandleFunc("/trigger-must-gather-configuration", triggerMustGatherConfiguration)
 	http.HandleFunc("/trigger-must-gather", triggerMustGather)
 	http.HandleFunc("/trigger-created", staticPage("html/trigger_created.html"))
-	http.HandleFunc("/trigger-not-created", staticPage("html/trigger_not_created.html"))
+	http.HandleFunc(triggerNotCreatedEndpoint, staticPage("html/trigger_not_created.html"))
 
 	// try to start the server
 	err := http.ListenAndServe(address, nil)
