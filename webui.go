@@ -58,6 +58,7 @@ const (
 
 // REST API endpoints
 const (
+	configurationCreatedEndpoint    = "/configuration-created"
 	configurationNotCreatedEndpoint = "/configuration-not-created"
 	listConfigurationsEndpoint      = "/list-configurations"
 	profileCreatedEndpoint          = "/profile-created"
@@ -495,7 +496,7 @@ func storeConfiguration(writer http.ResponseWriter, request *http.Request) {
 		http.Redirect(writer, request, configurationNotCreatedEndpoint, 301)
 	} else {
 		log.Println("Configuration has been created")
-		http.Redirect(writer, request, "/configuration-created", 301)
+		http.Redirect(writer, request, configurationCreatedEndpoint, 301)
 	}
 }
 
@@ -653,7 +654,7 @@ func startHTTPServer(address string) {
 	http.HandleFunc("/bootstrap.min.css", staticPage("html/bootstrap.min.css"))
 	http.HandleFunc("/bootstrap.min.js", staticPage("html/bootstrap.min.js"))
 	http.HandleFunc("/ccx.css", staticPage("html/ccx.css"))
-	http.HandleFunc("/configuration-created", staticPage("html/configuration_created.html"))
+	http.HandleFunc(configurationCreatedEndpoint, staticPage("html/configuration_created.html"))
 	http.HandleFunc(configurationNotCreatedEndpoint, staticPage("html/configuration_not_created.html"))
 	http.HandleFunc(profileCreatedEndpoint, staticPage("html/profile_created.html"))
 	http.HandleFunc(profileNotCreatedEndpoint, staticPage("html/profile_not_created.html"))
