@@ -63,6 +63,7 @@ const (
 	listConfigurationsEndpoint      = "/list-configurations"
 	profileCreatedEndpoint          = "/profile-created"
 	profileNotCreatedEndpoint       = "/profile-not-created"
+	listTriggersEndpoint            = "/list-triggers"
 	triggerCreatedEndpoint          = "/trigger-created"
 	triggerNotCreatedEndpoint       = "/trigger-not-created"
 )
@@ -556,7 +557,7 @@ func activateTrigger(writer http.ResponseWriter, request *http.Request) {
 
 	// everything is ok, trigger has been activated
 	fmt.Println("Trigger " + triggerID[0] + " has been activated")
-	http.Redirect(writer, request, "/list-triggers", 307)
+	http.Redirect(writer, request, listTriggersEndpoint, 307)
 }
 
 func deactivateTrigger(writer http.ResponseWriter, request *http.Request) {
@@ -576,7 +577,7 @@ func deactivateTrigger(writer http.ResponseWriter, request *http.Request) {
 
 	// everything is ok, trigger has been deactivated
 	fmt.Println("Trigger " + triggerID[0] + " has been deactivated")
-	http.Redirect(writer, request, "/list-triggers", 307)
+	http.Redirect(writer, request, listTriggersEndpoint, 307)
 }
 
 func triggerMustGatherConfiguration(writer http.ResponseWriter, request *http.Request) {
@@ -663,7 +664,7 @@ func startHTTPServer(address string) {
 	http.HandleFunc("/list-profiles", listProfiles)
 	http.HandleFunc(listConfigurationsEndpoint, listConfigurations)
 	http.HandleFunc("/list-all-triggers", listTriggers)
-	http.HandleFunc("/list-triggers", listTriggers)
+	http.HandleFunc(listTriggersEndpoint, listTriggers)
 	http.HandleFunc("/describe-configuration", describeConfiguration)
 	http.HandleFunc("/new-profile", staticPage("html/new_profile.html"))
 	http.HandleFunc("/new-configuration", staticPage("html/new_configuration.html"))
