@@ -45,9 +45,6 @@ const (
 
 	// ContentTypeCSS represents content type text/css used in HTTP responses
 	ContentTypeCSS = "text/css"
-
-	// errorExecutingTemplate is a message displayed when any template can't be executed for whatever reason
-	errorExecutingTemplate = "Error executing template"
 )
 
 // URL and form parameters
@@ -66,6 +63,13 @@ const (
 	listTriggersEndpoint            = "/list-triggers"
 	triggerCreatedEndpoint          = "/trigger-created"
 	triggerNotCreatedEndpoint       = "/trigger-not-created"
+)
+
+// Messages
+const (
+	// errorExecutingTemplate is a message displayed when any template can't be executed for whatever reason
+	errorExecutingTemplate   = "Error executing template"
+	errorHandlingFormMessage = "Error handling form"
 )
 
 var controllerURL = ""
@@ -441,7 +445,7 @@ func describeConfiguration(writer http.ResponseWriter, request *http.Request) {
 func storeProfile(writer http.ResponseWriter, request *http.Request) {
 	err := request.ParseForm()
 	if err != nil {
-		log.Println("Error handling form", err)
+		log.Println(errorHandlingFormMessage, err)
 		notFoundResponse(writer)
 		return
 	}
@@ -471,7 +475,7 @@ func storeProfile(writer http.ResponseWriter, request *http.Request) {
 func storeConfiguration(writer http.ResponseWriter, request *http.Request) {
 	err := request.ParseForm()
 	if err != nil {
-		log.Println("Error handling form", err)
+		log.Println(errorHandlingFormMessage, err)
 		notFoundResponse(writer)
 		return
 	}
@@ -618,7 +622,7 @@ func triggerMustGatherConfiguration(writer http.ResponseWriter, request *http.Re
 func triggerMustGather(writer http.ResponseWriter, request *http.Request) {
 	err := request.ParseForm()
 	if err != nil {
-		log.Println("Error handling form", err)
+		log.Println(errorHandlingFormMessage, err)
 		notFoundResponse(writer)
 		return
 	}
