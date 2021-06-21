@@ -68,8 +68,9 @@ const (
 // Messages
 const (
 	// errorExecutingTemplate is a message displayed when any template can't be executed for whatever reason
-	errorExecutingTemplate   = "Error executing template"
-	errorHandlingFormMessage = "Error handling form"
+	errorExecutingTemplate               = "Error executing template"
+	errorHandlingFormMessage             = "Error handling form"
+	errorCommunicatingWithServiceMessage = "Error communicating with the service"
 )
 
 var controllerURL = ""
@@ -464,7 +465,7 @@ func storeProfile(writer http.ResponseWriter, request *http.Request) {
 
 	err = performWriteRequest(url, http.MethodPost, strings.NewReader(configuration))
 	if err != nil {
-		log.Println("Error communicating with the service", err)
+		log.Println(errorCommunicatingWithServiceMessage, err)
 		http.Redirect(writer, request, profileNotCreatedEndpoint, 301)
 	} else {
 		log.Println("Configuration profile has been created")
@@ -498,7 +499,7 @@ func storeConfiguration(writer http.ResponseWriter, request *http.Request) {
 
 	err = performWriteRequest(url, http.MethodPost, strings.NewReader(configuration))
 	if err != nil {
-		log.Println("Error communicating with the service", err)
+		log.Println(errorCommunicatingWithServiceMessage, err)
 		http.Redirect(writer, request, configurationNotCreatedEndpoint, 301)
 	} else {
 		log.Println("Configuration has been created")
@@ -516,7 +517,7 @@ func enableConfiguration(writer http.ResponseWriter, request *http.Request) {
 	url := controllerURL + APIPrefix + "client/configuration/" + configurationID[0] + "/enable"
 	err := performWriteRequest(url, http.MethodPut, nil)
 	if err != nil {
-		fmt.Println("Error communicating with the service", err)
+		fmt.Println(errorCommunicatingWithServiceMessage, err)
 		return
 	}
 
@@ -535,7 +536,7 @@ func disableConfiguration(writer http.ResponseWriter, request *http.Request) {
 	url := controllerURL + APIPrefix + "client/configuration/" + configurationID[0] + "/disable"
 	err := performWriteRequest(url, http.MethodPut, nil)
 	if err != nil {
-		fmt.Println("Error communicating with the service", err)
+		fmt.Println(errorCommunicatingWithServiceMessage, err)
 		return
 	}
 
@@ -555,7 +556,7 @@ func activateTrigger(writer http.ResponseWriter, request *http.Request) {
 
 	err := performWriteRequest(url, http.MethodPut, nil)
 	if err != nil {
-		fmt.Println("Error communicating with the service", err)
+		fmt.Println(errorCommunicatingWithServiceMessage, err)
 		return
 	}
 
@@ -575,7 +576,7 @@ func deactivateTrigger(writer http.ResponseWriter, request *http.Request) {
 
 	err := performWriteRequest(url, http.MethodPut, nil)
 	if err != nil {
-		fmt.Println("Error communicating with the service", err)
+		fmt.Println(errorCommunicatingWithServiceMessage, err)
 		return
 	}
 
@@ -647,7 +648,7 @@ func triggerMustGather(writer http.ResponseWriter, request *http.Request) {
 
 	err = performWriteRequest(url, http.MethodPost, nil)
 	if err != nil {
-		log.Println("Error communicating with the service", err)
+		log.Println(errorCommunicatingWithServiceMessage, err)
 		http.Redirect(writer, request, triggerNotCreatedEndpoint, 301)
 	} else {
 		log.Println("Trigger has been created")
