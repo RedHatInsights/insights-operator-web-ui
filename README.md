@@ -8,6 +8,18 @@ Web UI for insights operator instrumentation service
 ![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/RedHatInsights/insights-operator-web-ui)
 [![License](https://img.shields.io/badge/license-Apache-blue)](https://github.com/RedHatInsights/insights-operator-web-ui/blob/master/LICENSE)
 
+
+<!-- vim-markdown-toc GFM -->
+
+* [Description](#description)
+* [How to build it](#how-to-build-it)
+* [Start](#start)
+* [Configuration](#configuration)
+* [CI](#ci)
+* [Contribution](#contribution)
+
+<!-- vim-markdown-toc -->
+
 ## Description
 
 A simple web-based user interface to the insights operator instrumentation service
