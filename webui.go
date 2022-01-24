@@ -1,5 +1,5 @@
 /*
-Copyright © 2019, 2020 Red Hat, Inc.
+Copyright © 2019, 2020, 2021, 2022 Red Hat, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -49,8 +49,9 @@ const (
 
 // URL and form parameters
 const (
-	linkParameter   = "link"
-	reasonParameter = "reason"
+	linkParameter    = "link"
+	reasonParameter  = "reason"
+	clusterParameter = "cluster"
 )
 
 // REST API endpoints
@@ -483,7 +484,7 @@ func storeConfiguration(writer http.ResponseWriter, request *http.Request) {
 	form := request.Form
 
 	username := form.Get("username")
-	cluster := form.Get("cluster")
+	cluster := form.Get(clusterParameter)
 	reason := form.Get(reasonParameter)
 	description := form.Get("description")
 	configuration := form.Get("configuration")
