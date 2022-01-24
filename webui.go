@@ -49,11 +49,12 @@ const (
 
 // URL and form parameters
 const (
-	usernameParameter    = "username"
-	linkParameter        = "link"
-	reasonParameter      = "reason"
-	clusterParameter     = "cluster"
-	descriptionParameter = "description"
+	usernameParameter      = "username"
+	linkParameter          = "link"
+	reasonParameter        = "reason"
+	clusterParameter       = "cluster"
+	descriptionParameter   = "description"
+	configurationParameter = "configuration"
 )
 
 // REST API endpoints
@@ -457,11 +458,11 @@ func storeProfile(writer http.ResponseWriter, request *http.Request) {
 
 	username := form.Get("username")
 	description := form.Get(descriptionParameter)
-	configuration := form.Get("configuration")
+	configuration := form.Get(configurationParameter)
 
 	log.Println("username", username)
 	log.Println(descriptionParameter, description)
-	log.Println("configuration", configuration)
+	log.Println(configurationParameter, configuration)
 
 	query := "username=" + url.QueryEscape(username) + "&description=" + url.QueryEscape(description)
 	url := controllerURL + APIPrefix + "client/profile?" + query
@@ -489,13 +490,13 @@ func storeConfiguration(writer http.ResponseWriter, request *http.Request) {
 	cluster := form.Get(clusterParameter)
 	reason := form.Get(reasonParameter)
 	description := form.Get(descriptionParameter)
-	configuration := form.Get("configuration")
+	configuration := form.Get(configurationParameter)
 
 	log.Println(usernameParameter, username)
 	log.Println(clusterParameter, cluster)
 	log.Println(reasonParameter, reason)
 	log.Println(descriptionParameter, description)
-	log.Println("configuration", configuration)
+	log.Println(configurationParameter, configuration)
 
 	query := "username=" + url.QueryEscape(username) + "&reason=" + url.QueryEscape(reason) + "&description=" + url.QueryEscape(description)
 	url := controllerURL + APIPrefix + "client/cluster/" + url.PathEscape(cluster) + "/configuration?" + query
