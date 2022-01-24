@@ -49,9 +49,10 @@ const (
 
 // URL and form parameters
 const (
-	linkParameter    = "link"
-	reasonParameter  = "reason"
-	clusterParameter = "cluster"
+	linkParameter        = "link"
+	reasonParameter      = "reason"
+	clusterParameter     = "cluster"
+	descriptionParameter = "description"
 )
 
 // REST API endpoints
@@ -486,7 +487,7 @@ func storeConfiguration(writer http.ResponseWriter, request *http.Request) {
 	username := form.Get("username")
 	cluster := form.Get(clusterParameter)
 	reason := form.Get(reasonParameter)
-	description := form.Get("description")
+	description := form.Get(descriptionParameter)
 	configuration := form.Get("configuration")
 
 	log.Println("username", username)
