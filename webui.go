@@ -493,7 +493,7 @@ func storeConfiguration(writer http.ResponseWriter, request *http.Request) {
 	log.Println("username", username)
 	log.Println(clusterParameter, cluster)
 	log.Println(reasonParameter, reason)
-	log.Println("description", description)
+	log.Println(descriptionParameter, description)
 	log.Println("configuration", configuration)
 
 	query := "username=" + url.QueryEscape(username) + "&reason=" + url.QueryEscape(reason) + "&description=" + url.QueryEscape(description)
