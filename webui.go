@@ -49,6 +49,7 @@ const (
 
 // URL and form parameters
 const (
+	usernameParameter    = "username"
 	linkParameter        = "link"
 	reasonParameter      = "reason"
 	clusterParameter     = "cluster"
@@ -484,13 +485,13 @@ func storeConfiguration(writer http.ResponseWriter, request *http.Request) {
 	}
 	form := request.Form
 
-	username := form.Get("username")
+	username := form.Get(usernameParameter)
 	cluster := form.Get(clusterParameter)
 	reason := form.Get(reasonParameter)
 	description := form.Get(descriptionParameter)
 	configuration := form.Get("configuration")
 
-	log.Println("username", username)
+	log.Println(usernameParameter, username)
 	log.Println(clusterParameter, cluster)
 	log.Println(reasonParameter, reason)
 	log.Println(descriptionParameter, description)
