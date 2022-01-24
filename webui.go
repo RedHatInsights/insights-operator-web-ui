@@ -460,7 +460,7 @@ func storeProfile(writer http.ResponseWriter, request *http.Request) {
 	configuration := form.Get("configuration")
 
 	log.Println("username", username)
-	log.Println("description", description)
+	log.Println(descriptionParameter, description)
 	log.Println("configuration", configuration)
 
 	query := "username=" + url.QueryEscape(username) + "&description=" + url.QueryEscape(description)
