@@ -490,7 +490,7 @@ func storeConfiguration(writer http.ResponseWriter, request *http.Request) {
 	configuration := form.Get("configuration")
 
 	log.Println("username", username)
-	log.Println("cluster", cluster)
+	log.Println(clusterParameter, cluster)
 	log.Println(reasonParameter, reason)
 	log.Println("description", description)
 	log.Println("configuration", configuration)
