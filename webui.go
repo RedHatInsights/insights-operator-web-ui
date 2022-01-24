@@ -456,7 +456,7 @@ func storeProfile(writer http.ResponseWriter, request *http.Request) {
 	form := request.Form
 
 	username := form.Get("username")
-	description := form.Get("description")
+	description := form.Get(descriptionParameter)
 	configuration := form.Get("configuration")
 
 	log.Println("username", username)
