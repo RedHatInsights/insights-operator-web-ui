@@ -219,17 +219,6 @@ func readConfigurationProfile(controllerURL string, apiPrefix string, profileID 
 	return &profile, nil
 }
 
-func readClusterConfigurationByID(controllerURL string, apiPrefix string, configurationID string) (*string, error) {
-	url := controllerURL + apiPrefix + "client/configuration/" + configurationID
-	body, err := performReadRequest(url)
-	if err != nil {
-		return nil, err
-	}
-
-	str := string(body)
-	return &str, nil
-}
-
 func getContentType(filename string) string {
 	// TODO: to map
 	if strings.HasSuffix(filename, ".html") {
