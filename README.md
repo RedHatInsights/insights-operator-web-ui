@@ -1,6 +1,7 @@
 # insights-operator-web-ui
 Web UI for insights operator instrumentation service
 
+[![forthebadge made-with-go](http://ForTheBadge.com/images/badges/made-with-go.svg)](https://go.dev/)
 [![GoDoc](https://godoc.org/github.com/RedHatInsights/insights-operator-web-ui?status.svg)](https://godoc.org/github.com/RedHatInsights/insights-operator-web-ui)
 [![Go Report Card](https://goreportcard.com/badge/github.com/RedHatInsights/insights-operator-web-ui)](https://goreportcard.com/report/github.com/RedHatInsights/insights-operator-web-ui)
 [![Build Status](https://travis-ci.org/RedHatInsights/insights-operator-web-ui.svg?branch=master)](https://travis-ci.org/RedHatInsights/insights-operator-web-ui)
@@ -17,6 +18,7 @@ Web UI for insights operator instrumentation service
 * [Configuration](#configuration)
 * [CI](#ci)
 * [Contribution](#contribution)
+* [Package manifest](#package-manifest)
 
 <!-- vim-markdown-toc -->
 
